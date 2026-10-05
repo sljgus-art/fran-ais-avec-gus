@@ -9,6 +9,7 @@ fetch("francais_flashcards_A1_B2_v1.json")
     tarjetas = data;
     tarjetasFiltradas = [...tarjetas];
 
+    actualizarEstadisticas();
     cargarTarjeta();
 
 });
@@ -28,10 +29,14 @@ function filtrarNivel(){
     }else{
 
         tarjetasFiltradas =
-            tarjetas.filter(t => t.nivel === nivel);
+            tarjetas.filter(
+                t => t.nivel === nivel
+            );
     }
 
     indice = 0;
+
+    document.getElementById("espanol").innerText = "";
 
     cargarTarjeta();
 }
@@ -45,10 +50,13 @@ function cargarTarjeta(){
 
         document.getElementById("espanol").innerText = "";
 
+        document.getElementById("info").innerText = "";
+
         return;
     }
 
-    let card = tarjetasFiltradas[indice];
+    const card =
+        tarjetasFiltradas[indice];
 
     document.getElementById("contador").innerText =
         "Tarjeta " +
@@ -57,7 +65,8 @@ function cargarTarjeta(){
         tarjetasFiltradas.length;
 
     document.getElementById("barraProgreso").value =
-        ((indice + 1) / tarjetasFiltradas.length) * 100;
+        ((indice + 1) /
+        tarjetasFiltradas.length) * 100;
 
     document.getElementById("info").innerText =
         "📘 " +
@@ -75,9 +84,12 @@ document
 .getElementById("mostrarBtn")
 .addEventListener("click", () => {
 
+    if(tarjetasFiltradas.length === 0){
+        return;
+    }
+
     document.getElementById("espanol").innerText =
         tarjetasFiltradas[indice].espanol;
-
 });
 
 function siguiente(){
@@ -98,7 +110,8 @@ function anterior(){
 
     if(indice < 0){
 
-        indice = tarjetasFiltradas.length - 1;
+        indice =
+            tarjetasFiltradas.length - 1;
     }
 
     cargarTarjeta();
@@ -113,11 +126,12 @@ function escuchar(){
     const texto =
         tarjetasFiltradas[indice].frances;
 
-    let voz =
+    const voz =
         new SpeechSynthesisUtterance(texto);
 
     voz.lang = "fr-FR";
 
+    speechSynthesis.cancel();
     speechSynthesis.speak(voz);
 }
 
@@ -138,14 +152,15 @@ function guardarProgreso(acierto){
             localStorage.getItem("francesGus")
         ) || {};
 
-    let id =
+    const id =
         tarjetasFiltradas[indice].id;
 
     progreso[id] = {
 
         aprendido: acierto,
-        fecha: new Date().toISOString()
 
+        fecha:
+            new Date().toISOString()
     };
 
     localStorage.setItem(
@@ -153,13 +168,54 @@ function guardarProgreso(acierto){
         JSON.stringify(progreso)
     );
 
+    actualizarEstadisticas();
+
     siguiente();
 }
 
-if ('serviceWorker' in navigator) {
+function actualizarEstadisticas(){
 
-    navigator.serviceWorker.register(
-        "service-worker.js"
+    let progreso =
+        JSON.parse(
+            localStorage.getItem("francesGus")
+        ) || {};
+
+    let aprendidas = 0;
+    let dificiles = 0;
+
+    Object.values(progreso)
+    .forEach(item => {
+
+        if(item.aprendido){
+
+            aprendidas++;
+
+        }else{
+
+            dificiles++;
+        }
+
+    });
+
+    document.getElementById("aprendidas").innerText =
+        aprendidas;
+
+    document.getElementById("dificiles").innerText =
+        dificiles;
+
+    document.getElementById("total").innerText =
+        tarjetas.length;
+}
+
+if("serviceWorker" in navigator){
+
+    window.addEventListener(
+        "load",
+        () => {
+
+            navigator.serviceWorker
+            .register("service-worker.js");
+
+        }
     );
-
 }
