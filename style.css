@@ -1,98 +1,123 @@
-body{
+*{
     margin:0;
-    font-family:Arial, sans-serif;
-    background:#f3f4f6;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#121212;
+    color:white;
+    max-width:500px;
+    margin:auto;
+    min-height:100vh;
 }
 
 header{
-    background:#0d6efd;
-    color:white;
+    background:#1e1e1e;
     text-align:center;
-    padding:15px;
+    padding:20px;
+    border-bottom:1px solid #333;
+}
+
+header h1{
+    font-size:28px;
 }
 
 main{
     padding:20px;
 }
 
-.filters{
-    margin-bottom:15px;
-}
-
 select{
     width:100%;
-    padding:10px;
-    border-radius:8px;
+    padding:12px;
+    margin-bottom:20px;
+    border:none;
+    border-radius:10px;
+    background:#2a2a2a;
+    color:white;
 }
 
 .card{
-    background:white;
-    border-radius:15px;
-    padding:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
+    background:#1e1e1e;
+    border-radius:20px;
+    padding:25px;
+    min-height:350px;
+    box-shadow:0 0 20px rgba(0,0,0,.4);
 }
 
 #info{
-    color:gray;
-    font-size:14px;
-    margin-bottom:10px;
+    text-align:center;
+    color:#999;
+    margin-bottom:20px;
 }
 
 .front{
-    font-size:32px;
+    font-size:38px;
     font-weight:bold;
     text-align:center;
-    margin:25px 0;
+    margin-top:40px;
+    margin-bottom:40px;
 }
 
 .back{
-    font-size:24px;
+    font-size:28px;
     text-align:center;
-    color:#198754;
+    color:#4ade80;
+    min-height:60px;
+    margin-bottom:20px;
+}
+
+#mostrarBtn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    background:#0d6efd;
+    color:white;
     margin-bottom:20px;
 }
 
 .actions{
     display:flex;
-    justify-content:center;
+    justify-content:space-between;
     gap:10px;
+    margin-bottom:20px;
 }
 
 .actions button{
-    font-size:20px;
-    padding:10px 20px;
+    flex:1;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    font-size:22px;
+    background:#2d2d2d;
+    color:white;
 }
 
 .learn{
-    margin-top:20px;
     display:flex;
     gap:10px;
 }
 
 .learn button{
     flex:1;
-    padding:12px;
+    padding:15px;
+    border:none;
+    border-radius:12px;
     font-weight:bold;
+    font-size:16px;
 }
 
 .bad{
     background:#dc3545;
     color:white;
-    border:none;
-    border-radius:8px;
 }
 
 .good{
     background:#198754;
     color:white;
-    border:none;
-    border-radius:8px;
-}
-
-#mostrarBtn{
-    width:100%;
-    padding:12px;
-    margin-bottom:15px;
 }
 
 nav{
@@ -100,15 +125,18 @@ nav{
     bottom:0;
     left:0;
     right:0;
-    background:white;
+    max-width:500px;
+    margin:auto;
+    background:#1e1e1e;
+    border-top:1px solid #333;
     display:flex;
     justify-content:space-around;
-    padding:10px;
-    box-shadow:0 -2px 8px rgba(0,0,0,.1);
+    padding:12px;
 }
 
 nav button{
-    border:none;
     background:none;
+    border:none;
+    color:white;
     font-size:24px;
 }
