@@ -18,37 +18,75 @@ header{
     text-align:center;
     padding:20px;
     border-bottom:1px solid #333;
+    position:sticky;
+    top:0;
+    z-index:100;
 }
 
 header h1{
     font-size:28px;
+    margin-bottom:10px;
+}
+
+#contador{
+    text-align:center;
+    margin-top:10px;
+    margin-bottom:10px;
+    color:#cccccc;
+    font-size:14px;
+}
+
+#barraProgreso{
+    width:100%;
+    height:10px;
+    margin-bottom:5px;
+}
+
+progress::-webkit-progress-bar{
+    background:#2a2a2a;
+    border-radius:10px;
+}
+
+progress::-webkit-progress-value{
+    background:#0d6efd;
+    border-radius:10px;
+}
+
+progress::-moz-progress-bar{
+    background:#0d6efd;
 }
 
 main{
     padding:20px;
+    padding-bottom:90px;
+}
+
+.filters{
+    margin-bottom:20px;
 }
 
 select{
     width:100%;
-    padding:12px;
-    margin-bottom:20px;
+    padding:14px;
     border:none;
-    border-radius:10px;
+    border-radius:12px;
     background:#2a2a2a;
     color:white;
+    font-size:16px;
 }
 
 .card{
     background:#1e1e1e;
     border-radius:20px;
     padding:25px;
-    min-height:350px;
+    min-height:420px;
     box-shadow:0 0 20px rgba(0,0,0,.4);
 }
 
 #info{
     text-align:center;
-    color:#999;
+    color:#999999;
+    font-size:14px;
     margin-bottom:20px;
 }
 
@@ -56,8 +94,9 @@ select{
     font-size:38px;
     font-weight:bold;
     text-align:center;
-    margin-top:40px;
-    margin-bottom:40px;
+    margin-top:50px;
+    margin-bottom:50px;
+    word-break:break-word;
 }
 
 .back{
@@ -65,18 +104,25 @@ select{
     text-align:center;
     color:#4ade80;
     min-height:60px;
-    margin-bottom:20px;
+    margin-bottom:25px;
+    word-break:break-word;
 }
 
 #mostrarBtn{
     width:100%;
-    padding:15px;
+    padding:16px;
     border:none;
     border-radius:12px;
     font-size:18px;
+    font-weight:bold;
     background:#0d6efd;
     color:white;
     margin-bottom:20px;
+    cursor:pointer;
+}
+
+#mostrarBtn:hover{
+    opacity:.9;
 }
 
 .actions{
@@ -94,6 +140,11 @@ select{
     font-size:22px;
     background:#2d2d2d;
     color:white;
+    cursor:pointer;
+}
+
+.actions button:hover{
+    background:#3a3a3a;
 }
 
 .learn{
@@ -108,6 +159,7 @@ select{
     border-radius:12px;
     font-weight:bold;
     font-size:16px;
+    cursor:pointer;
 }
 
 .bad{
@@ -120,6 +172,14 @@ select{
     color:white;
 }
 
+.bad:hover{
+    opacity:.9;
+}
+
+.good:hover{
+    opacity:.9;
+}
+
 nav{
     position:fixed;
     bottom:0;
@@ -130,13 +190,4 @@ nav{
     background:#1e1e1e;
     border-top:1px solid #333;
     display:flex;
-    justify-content:space-around;
-    padding:12px;
-}
-
-nav button{
-    background:none;
-    border:none;
-    color:white;
-    font-size:24px;
-}
+ 
