@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Français avec Gus</title>
+
+    <linkest.json
+    <link rel="stylesheet" href="style.css">
+
+    <meta name="theme-color" content="#0d6efd">
+</head>
+
+<body>
+
+<header>
+    <h1>🇫🇷 Français avec Gus</h1>
+</header>
+
+<main>
+
+    <div class="filters">
+
+        <select id="nivelFilter">
+            <option value="Todos">Todos los niveles</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+        </select>
+
+    </div>
+
+    <div class="card">
+
+        <div id="info"></div>
+
+        <div id="frances" class="front"></div>
+
+        <div id="espanol" class="back"></div>
+
+        <button id="mostrarBtn">
+            Mostrar respuesta
+        </button>
+
+        <div class="actions">
+
+            <button onclick="anterior()">
+                ⬅
+            </button>
+
+            <button onclick="escuchar()">
+                🔊
+            </button>
+
+            <button onclick="siguiente()">
+                ➡
+            </button>
+
+        </div>
+
+        <div class="learn">
+
+            <button class="bad" onclick="marcarDificil()">
+                ❌ No sabía
+            </button>
+
+            <button class="good" onclick="marcarFacil()">
+                ✅ La sabía
+            </button>
+
+        </div>
+
+    </div>
+
+</main>
+
+<nav>
+
+    <button>🏠</button>
+    <button>📚</button>
+    <button>📊</button>
+    <button>⚙️</button>
+
+</nav>
+
+<script src="app.js"></script>
+
+</body>
+
+</html>
