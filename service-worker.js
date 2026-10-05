@@ -1,4 +1,4 @@
-const CACHE_NAME = "francais-gus-v1";
+const CACHE_NAME = "francais-gus-v2";
 
 const FILES_TO_CACHE = [
 
@@ -7,7 +7,9 @@ const FILES_TO_CACHE = [
     "./style.css",
     "./app.js",
     "./manifest.json",
-    "./francais_flashcards_A1_B2_v1.json"
+    "./francais_flashcards_A1_B2_v1.json",
+    "./icon-192.png",
+    "./icon-512.png"
 ];
 
 self.addEventListener("install", event => {
@@ -17,6 +19,31 @@ self.addEventListener("install", event => {
         caches.open(CACHE_NAME)
         .then(cache => cache.addAll(FILES_TO_CACHE))
     );
+
+    self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
+
+    event.waitUntil(
+
+        caches.keys()
+        .then(keys => {
+
+            return Promise.all(
+
+                keys.map(key => {
+
+                    if(key !== CACHE_NAME){
+
+                        return caches.delete(key);
+                    }
+                })
+            );
+        })
+    );
+
+    self.clients.claim();
 });
 
 self.addEventListener("fetch", event => {
@@ -29,4 +56,4 @@ self.addEventListener("fetch", event => {
             return response || fetch(event.request);
         })
     );
-}
+});
