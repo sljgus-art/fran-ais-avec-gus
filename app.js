@@ -39,13 +39,31 @@ function filtrarNivel(){
 function cargarTarjeta(){
 
     if(tarjetasFiltradas.length === 0){
+
+        document.getElementById("frances").innerText =
+            "No hay tarjetas";
+
+        document.getElementById("espanol").innerText = "";
+
         return;
     }
 
     let card = tarjetasFiltradas[indice];
 
+    document.getElementById("contador").innerText =
+        "Tarjeta " +
+        (indice + 1) +
+        " de " +
+        tarjetasFiltradas.length;
+
+    document.getElementById("barraProgreso").value =
+        ((indice + 1) / tarjetasFiltradas.length) * 100;
+
     document.getElementById("info").innerText =
-        card.nivel + " • " + card.tema;
+        "📘 " +
+        card.nivel +
+        " | 🏷 " +
+        card.tema;
 
     document.getElementById("frances").innerText =
         card.frances;
@@ -59,6 +77,7 @@ document
 
     document.getElementById("espanol").innerText =
         tarjetasFiltradas[indice].espanol;
+
 });
 
 function siguiente(){
@@ -86,6 +105,10 @@ function anterior(){
 }
 
 function escuchar(){
+
+    if(tarjetasFiltradas.length === 0){
+        return;
+    }
 
     const texto =
         tarjetasFiltradas[indice].frances;
@@ -115,12 +138,14 @@ function guardarProgreso(acierto){
             localStorage.getItem("francesGus")
         ) || {};
 
-    let id = tarjetasFiltradas[indice].id;
+    let id =
+        tarjetasFiltradas[indice].id;
 
     progreso[id] = {
 
         aprendido: acierto,
         fecha: new Date().toISOString()
+
     };
 
     localStorage.setItem(
@@ -130,9 +155,11 @@ function guardarProgreso(acierto){
 
     siguiente();
 }
+
 if ('serviceWorker' in navigator) {
 
     navigator.serviceWorker.register(
         "service-worker.js"
     );
+
 }
