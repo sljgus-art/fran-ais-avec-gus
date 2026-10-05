@@ -10,7 +10,7 @@
 
     <title>Français avec Gus</title>
 
-    manifest.json
+    <link rel="manifest" href="manifest.json">
 
     <link rel="stylesheet" href="style.css">
 
@@ -20,121 +20,120 @@
 
 <body>
 
-    <header>
+<header>
 
-        <h1>🇫🇷 Français avec Gus</h1>
+    <h1>🇫🇷 Français avec Gus</h1>
 
-        <p id="contador"></p>
+    <p id="contador"></p>
 
-        <progress
-            id="barraProgreso"
-            value="0"
-            max="100">
-        </progress>
+    <progress
+        id="barraProgreso"
+        value="0"
+        max="100">
+    </progress>
 
-    </header>
+</header>
 
-    <main>
+<main>
 
-        <div class="filters">
+    <div class="filters">
 
-            <select id="nivelFilter">
+        <select id="nivelFilter">
 
-                <option value="Todos">
-                    Todos los niveles
-                </option>
+            <option value="Todos">
+                Todos los niveles
+            </option>
 
-                <option value="A1">
-                    A1
-                </option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
 
-                <option value="A2">
-                    A2
-                </option>
+        </select>
 
-                <option value="B1">
-                    B1
-                </option>
+    </div>
 
-                <option value="B2">
-                    B2
-                </option>
+    <div class="stats">
 
-            </select>
-
+        <div class="stat-box">
+            <span id="aprendidas">0</span>
+            <small>Aprendidas</small>
         </div>
 
-        <div class="card">
+        <div class="stat-box">
+            <span id="dificiles">0</span>
+            <small>Difíciles</small>
+        </div>
 
-            <div id="info"></div>
+        <div class="stat-box">
+            <span id="total">0</span>
+            <small>Total</small>
+        </div>
 
-            <div id="frances" class="front"></div>
+    </div>
 
-            <div id="espanol" class="back"></div>
+    <div class="card">
 
-            <button id="mostrarBtn">
-                Mostrar respuesta
+        <div id="info"></div>
+
+        <div id="frances" class="front"></div>
+
+        <div id="espanol" class="back"></div>
+
+        <button id="mostrarBtn">
+            Mostrar respuesta
+        </button>
+
+        <div class="actions">
+
+            <button onclick="anterior()">
+                ⬅
             </button>
 
-            <div class="actions">
+            <button onclick="escuchar()">
+                🔊
+            </button>
 
-                <button onclick="anterior()">
-                    ⬅
-                </button>
-
-                <button onclick="escuchar()">
-                    🔊
-                </button>
-
-                <button onclick="siguiente()">
-                    ➡
-                </button>
-
-            </div>
-
-            <div class="learn">
-
-                <button class="bad"
-                        onclick="marcarDificil()">
-
-                    ❌ No sabía
-
-                </button>
-
-                <button class="good"
-                        onclick="marcarFacil()">
-
-                    ✅ La sabía
-
-                </button>
-
-            </div>
+            <button onclick="siguiente()">
+                ➡
+            </button>
 
         </div>
 
-    </main>
+        <div class="learn">
 
-    <nav>
+            <button
+                class="bad"
+                onclick="marcarDificil()">
 
-        <button>
-            🏠
-        </button>
+                ❌ No sabía
 
-        <button>
-            📚
-        </button>
+            </button>
 
-        <button>
-            📊
-        </button>
+            <button
+                class="good"
+                onclick="marcarFacil()">
 
-        <button>
-            ⚙️
-        </button>
+                ✅ La sabía
 
-    </nav>
+            </button>
 
-    <script src="app.js"></script>
+        </div>
+
+    </div>
+
+</main>
+
+<nav>
+
+    <button>🏠</button>
+    <button>📚</button>
+    <button>📊</button>
+    <button>⚙️</button>
+
+</nav>
+
+<script src="app.js"></script>
 
 </body>
 
