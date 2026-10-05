@@ -78,6 +78,8 @@ function cargarTarjeta(){
         card.frances;
 
     document.getElementById("espanol").innerText = "";
+
+    escuchar();
 }
 
 document
@@ -130,6 +132,9 @@ function escuchar(){
         new SpeechSynthesisUtterance(texto);
 
     voz.lang = "fr-FR";
+    voz.rate = 0.9;
+    voz.pitch = 1;
+    voz.volume = 1;
 
     speechSynthesis.cancel();
     speechSynthesis.speak(voz);
