@@ -1,151 +1,531 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta charset="UTF-8">
+<title>Français Coach</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#121212;
+    color:white;
+    max-width:800px;
+    margin:auto;
+    padding:20px;
+}
 
-    <title>Français avec Gus</title>
+h1,h2{
+    text-align:center;
+}
 
-    <link rel="manifest" href="manifest.json">
+.card{
+    background:#1e1e1e;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
 
-    <link rel="stylesheet" href="style.css">
+button{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    margin:5px;
+}
 
-    <meta name="theme-color" content="#0d6efd">
+button:hover{
+    background:#1d4ed8;
+}
 
+input{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    margin:10px 0;
+}
+
+.correcto{
+    color:#22c55e;
+    font-weight:bold;
+}
+
+.incorrecto{
+    color:#ef4444;
+    font-weight:bold;
+}
+
+.estadisticas p{
+    margin:6px 0;
+}
+
+.frase{
+    font-size:1.4rem;
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.racha{
+    text-align:center;
+    font-size:1.2rem;
+    color:#facc15;
+}
+</style>
 </head>
-
 <body>
 
-<header>
+<h1>🇫🇷 Français Coach</h1>
 
-    <h1>🇫🇷 Français avec Gus</h1>
-
-    <p id="contador"></p>
-
-    <progress
-        id="barraProgreso"
-        value="0"
-        max="100">
-    </progress>
-
-</header>
-
-<main>
-
-    <div class="filters">
-
-        <select id="nivelFilter">
-
-            <option value="Todos">
-                Todos los niveles
-            </option>
-
-            <option value="A1">A1</option>
-            <option value="A2">A2</option>
-            <option value="B1">B1</option>
-            <option value="B2">B2</option>
-
-        </select>
-
+<div class="card">
+    <div class="racha">
+        🔥 Racha: <span id="racha">0</span> días
     </div>
+</div>
 
-    <div class="stats">
+<div class="card">
 
-        <div class="stat-box">
-            <span id="aprendidas">0</span>
-            <small>Aprendidas</small>
-        </div>
+    <h2>Ejercicio</h2>
 
-        <div class="stat-box">
-            <span id="dificiles">0</span>
-            <small>Difíciles</small>
-        </div>
+    <div id="pregunta" class="frase"></div>
 
-        <div class="stat-box">
-            <span id="total">0</span>
-            <small>Total</small>
-        </div>
-
-    </div>
-
-    <div class="card">
-
-        <div id="info"></div>
-
-        <div id="frances" class="front"></div>
-
-        <div id="espanol" class="back"></div>
-
-        <button id="mostrarBtn">
-            Mostrar respuesta
-        </button>
-
-        <div class="actions">
-
-            <button onclick="anterior()">
-                ⬅
-            </button>
-
-            <button onclick="escuchar()">
-                🔊
-            </button>
-
-            <button onclick="siguiente()">
-                ➡
-            </button>
-
-        </div>
-
-        <div class="learn">
-
-            <button
-                class="bad"
-                onclick="marcarDificil()">
-
-                ❌ No sabía
-
-            </button>
-
-            <button
-                class="good"
-                onclick="marcarFacil()">
-
-                ✅ La sabía
-
-            </button>
-
-        </div>
-
-    </div>
-
-</main>
-
-<nav>
-
-    <button onclick="irInicio()">
-        🏠
+    <button onclick="escucharFrances()">
+        🔊 Escuchar
     </button>
 
-    <button onclick="mostrarTodas()">
-        📚
+    <input
+        type="text"
+        id="respuesta"
+        placeholder="Escribe la traducción"
+    >
+
+    <button onclick="comprobar()">
+        Comprobar
     </button>
 
-    <button onclick="mostrarResumen()">
-        📊
-    </button>
+    <p id="resultado"></p>
 
-    <button onclick="reiniciarProgreso()">
-        🔄
-    </button>
+</div>
 
-</nav>
+<div class="card estadisticas">
 
-<script src="app.js"></script>
+    <h2>📊 Estadísticas</h2>
+
+    <p>Total respuestas:
+        <span id="totalRespuestas">0</span>
+    </p>
+
+    <p>Aciertos:
+        <span id="aciertos">0</span>
+    </p>
+
+    <p>Fallos:
+        <span id="fallos">0</span>
+    </p>
+
+    <p>% éxito:
+        <span id="porcentaje">0</span>%
+    </p>
+
+</div>
+
+<script>
+
+const frases = [
+
+{
+id:1,
+frances:"Bonjour",
+espanol:"hola"
+},
+
+{
+id:2,
+frances:"Je vais au travail",
+espanol:"voy al trabajo"
+},
+
+{
+id:3,
+frances:"J'aime apprendre le français",
+espanol:"me gusta aprender francés"
+},
+
+{
+id:4,
+frances:"Il fait beau aujourd'hui",
+espanol:"hace buen tiempo hoy"
+},
+
+{
+id:5,
+frances:"Je voudrais un café",
+espanol:"quisiera un café"
+},
+
+{
+id:6,
+frances:"Comment allez-vous ?",
+espanol:"cómo está usted"
+},
+
+{
+id:7,
+frances:"Merci beaucoup",
+espanol:"muchas gracias"
+},
+
+{
+id:8,
+frances:"Je suis fatigué",
+espanol:"estoy cansado"
+},
+
+{
+id:9,
+frances:"Où est la gare ?",
+espanol:"dónde está la estación"
+},
+
+{
+id:10,
+frances:"Je parle un peu français",
+espanol:"hablo un poco de francés"
+}
+
+];
+
+let ejercicioActual = null;
+
+const estadisticas =
+JSON.parse(
+localStorage.getItem("estadisticas")
+)
+||
+{
+respuestas:0,
+aciertos:0,
+fallos:0
+};
+
+function guardarEstadisticas(){
+
+localStorage.setItem(
+"estadisticas",
+JSON.stringify(estadisticas)
+);
+
+}
+
+function obtenerRepasos(){
+
+let datos =
+JSON.parse(
+localStorage.getItem("repasos")
+);
+
+if(!datos){
+
+datos = {};
+
+frases.forEach(f => {
+
+datos[f.id] = {
+
+aciertos:0,
+fallos:0,
+proximoRepaso:0
+
+};
+
+});
+
+localStorage.setItem(
+"repasos",
+JSON.stringify(datos)
+);
+
+}
+
+return datos;
+}
+
+function guardarRepasos(datos){
+
+localStorage.setItem(
+"repasos",
+JSON.stringify(datos)
+);
+
+}
+
+function seleccionarPendiente(){
+
+const repasos =
+obtenerRepasos();
+
+const ahora =
+Date.now();
+
+let pendientes =
+frases.filter(f =>
+
+repasos[f.id].proximoRepaso <= ahora
+
+);
+
+if(pendientes.length===0){
+
+pendientes = frases;
+
+}
+
+ejercicioActual =
+pendientes[
+Math.floor(
+Math.random()*pendientes.length
+)
+];
+
+document.getElementById(
+"pregunta"
+).textContent =
+ejercicioActual.frances;
+
+document.getElementById(
+"respuesta"
+).value="";
+
+document.getElementById(
+"resultado"
+).textContent="";
+}
+
+function comprobar(){
+
+const respuestaUsuario =
+document.getElementById(
+"respuesta"
+).value
+.trim()
+.toLowerCase();
+
+const correcta =
+ejercicioActual.espanol
+.trim()
+.toLowerCase();
+
+const resultado =
+document.getElementById(
+"resultado"
+);
+
+const repasos =
+obtenerRepasos();
+
+estadisticas.respuestas++;
+
+if(respuestaUsuario===correcta){
+
+estadisticas.aciertos++;
+
+repasos[
+ejercicioActual.id
+].aciertos++;
+
+const nivel =
+repasos[
+ejercicioActual.id
+].aciertos;
+
+const dias =
+Math.min(30,nivel);
+
+repasos[
+ejercicioActual.id
+].proximoRepaso =
+Date.now() +
+dias *
+24 *
+60 *
+60 *
+1000;
+
+resultado.className =
+"correcto";
+
+resultado.textContent =
+"✅ Correcto";
+
+}else{
+
+estadisticas.fallos++;
+
+repasos[
+ejercicioActual.id
+].fallos++;
+
+repasos[
+ejercicioActual.id
+].proximoRepaso =
+Date.now() +
+24 *
+60 *
+60 *
+1000;
+
+resultado.className =
+"incorrecto";
+
+resultado.textContent =
+"❌ Correcto: " +
+ejercicioActual.espanol;
+
+}
+
+guardarRepasos(repasos);
+guardarEstadisticas();
+
+actualizarDashboard();
+actualizarRacha();
+
+setTimeout(
+seleccionarPendiente,
+1500
+);
+
+}
+
+function actualizarDashboard(){
+
+document.getElementById(
+"totalRespuestas"
+).textContent =
+estadisticas.respuestas;
+
+document.getElementById(
+"aciertos"
+).textContent =
+estadisticas.aciertos;
+
+document.getElementById(
+"fallos"
+).textContent =
+estadisticas.fallos;
+
+const porcentaje =
+estadisticas.respuestas
+?
+Math.round(
+estadisticas.aciertos
+/
+estadisticas.respuestas
+*
+100
+)
+:
+0;
+
+document.getElementById(
+"porcentaje"
+).textContent =
+porcentaje;
+
+}
+
+function actualizarRacha(){
+
+const hoy =
+new Date()
+.toISOString()
+.split("T")[0];
+
+let racha =
+parseInt(
+localStorage.getItem("racha")
+) || 0;
+
+const ultimo =
+localStorage.getItem(
+"ultimoEstudio"
+);
+
+if(!ultimo){
+
+racha = 1;
+
+}
+else{
+
+const ayer =
+new Date();
+
+ayer.setDate(
+ayer.getDate()-1
+);
+
+const fechaAyer =
+ayer
+.toISOString()
+.split("T")[0];
+
+if(ultimo===fechaAyer){
+
+racha++;
+
+}
+else if(
+ultimo!==hoy
+){
+
+racha=1;
+
+}
+
+}
+
+localStorage.setItem(
+"racha",
+racha
+);
+
+localStorage.setItem(
+"ultimoEstudio",
+hoy
+);
+
+document.getElementById(
+"racha"
+).textContent =
+racha;
+
+}
+
+function escucharFrances(){
+
+if(!ejercicioActual) return;
+
+const voz =
+new SpeechSynthesisUtterance(
+ejercicioActual.frances
+);
+
+voz.lang="fr-FR";
+
+speechSynthesis.speak(
+voz
+);
+
+}
+
+actualizarDashboard();
+actualizarRacha();
+seleccionarPendiente();
+
+</script>
 
 </body>
-
 </html>
