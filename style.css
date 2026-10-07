@@ -1,267 +1,746 @@
+/* =========================
+   RESET
+========================= */
+
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
 }
 
-body{
-    font-family:Arial,sans-serif;
-    background:#121212;
-    color:white;
-    max-width:500px;
-    margin:auto;
-    min-height:100vh;
+/* =========================
+   TEMAS
+========================= */
+
+:root{
+
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --header:#ffffff;
+
+    --text:#111827;
+    --secondary:#6b7280;
+
+    --border:#e5e7eb;
+
+    --primary:#0d6efd;
+    --primary-hover:#0b5ed7;
+
+    --success:#198754;
+    --danger:#dc3545;
+
+    --shadow:
+    0 8px 25px rgba(0,0,0,.08);
 }
 
+body.dark{
+
+    --bg:#121212;
+    --card:#1e1e1e;
+    --header:#1e1e1e;
+
+    --text:#ffffff;
+    --secondary:#999999;
+
+    --border:#333333;
+
+    --primary:#0d6efd;
+    --primary-hover:#3b82f6;
+
+    --success:#22c55e;
+    --danger:#ef4444;
+
+    --shadow:
+    0 8px 25px rgba(0,0,0,.35);
+}
+
+/* =========================
+   BODY
+========================= */
+
+body{
+
+    font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+    background:var(--bg);
+    color:var(--text);
+
+    max-width:500px;
+    margin:auto;
+
+    min-height:100vh;
+
+    transition:.3s;
+}
+
+/* =========================
+   HEADER
+========================= */
+
 header{
-    background:#1e1e1e;
+
+    background:var(--header);
+
     text-align:center;
+
     padding:20px;
-    border-bottom:1px solid #333;
+
+    border-bottom:
+    1px solid var(--border);
+
     position:sticky;
+
     top:0;
+
     z-index:100;
+
+    backdrop-filter:blur(10px);
 }
 
 header h1{
+
     font-size:28px;
-    margin-bottom:10px;
+
+    margin-bottom:5px;
 }
 
-#contador{
-    text-align:center;
-    margin-top:10px;
-    margin-bottom:10px;
-    color:#cccccc;
+header p{
+
+    color:var(--secondary);
+
     font-size:14px;
 }
 
+/* =========================
+   BOTÓN TEMA
+========================= */
+
+#temaBtn{
+
+    position:absolute;
+
+    right:15px;
+
+    top:15px;
+
+    width:45px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:var(--primary);
+
+    color:white;
+
+    cursor:pointer;
+}
+
+/* =========================
+   PROGRESO SUPERIOR
+========================= */
+
+.stats-top{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:10px;
+
+    margin-bottom:20px;
+}
+
+.mini-card{
+
+    background:var(--card);
+
+    border-radius:16px;
+
+    padding:14px;
+
+    text-align:center;
+
+    box-shadow:var(--shadow);
+
+    font-size:18px;
+
+    font-weight:bold;
+}
+
+.mini-card span{
+
+    display:block;
+
+    margin-top:4px;
+
+    font-size:20px;
+}
+
+/* =========================
+   CONTADOR
+========================= */
+
+#contador{
+
+    text-align:center;
+
+    margin-top:10px;
+
+    margin-bottom:10px;
+
+    color:var(--secondary);
+
+    font-size:14px;
+}
+
+/* =========================
+   BARRA PROGRESO
+========================= */
+
 #barraProgreso{
+
     width:100%;
+
     height:10px;
+
     margin-bottom:10px;
 }
 
 progress::-webkit-progress-bar{
+
     background:#2a2a2a;
+
     border-radius:10px;
 }
 
 progress::-webkit-progress-value{
-    background:#0d6efd;
+
+    background:var(--primary);
+
     border-radius:10px;
 }
 
 progress::-moz-progress-bar{
-    background:#0d6efd;
+
+    background:var(--primary);
 }
 
+/* =========================
+   MAIN
+========================= */
+
 main{
+
     padding:20px;
+
     padding-bottom:90px;
 }
 
+/* =========================
+   SELECTORES
+========================= */
+
 .filters{
+
     margin-bottom:20px;
 }
 
 select{
+
     width:100%;
+
     padding:14px;
+
     border:none;
+
     border-radius:12px;
-    background:#2a2a2a;
-    color:white;
+
+    background:var(--card);
+
+    color:var(--text);
+
+    font-size:16px;
+
+    box-shadow:var(--shadow);
+}
+
+input{
+
+    width:100%;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    border:1px solid var(--border);
+
+    background:var(--card);
+
+    color:var(--text);
+
     font-size:16px;
 }
 
-/* ESTADÍSTICAS */
+/* =========================
+   ESTADÍSTICAS
+========================= */
 
 .stats{
+
     display:flex;
+
     gap:10px;
+
     margin-bottom:20px;
 }
 
 .stat-box{
+
     flex:1;
-    background:#1e1e1e;
-    border-radius:12px;
-    padding:12px;
+
+    background:var(--card);
+
+    border-radius:16px;
+
+    padding:15px;
+
     text-align:center;
-    box-shadow:0 0 10px rgba(0,0,0,.3);
+
+    box-shadow:var(--shadow);
 }
 
 .stat-box span{
+
     display:block;
+
     font-size:24px;
+
     font-weight:bold;
-    color:#0d6efd;
+
+    color:var(--primary);
 }
 
 .stat-box small{
-    color:#999;
+
+    color:var(--secondary);
+
     font-size:12px;
 }
 
-/* TARJETA */
+/* =========================
+   TARJETAS
+========================= */
 
 .card{
-    background:#1e1e1e;
-    border-radius:20px;
+
+    background:var(--card);
+
+    border-radius:24px;
+
     padding:25px;
+
     min-height:420px;
-    box-shadow:0 0 20px rgba(0,0,0,.4);
+
+    box-shadow:var(--shadow);
+
+    transition:.3s;
 }
 
-#info{
+.card h2{
+
     text-align:center;
-    color:#999999;
-    font-size:14px;
-    margin-bottom:20px;
+
+    margin-bottom:15px;
 }
+
+/* =========================
+   PREGUNTA
+========================= */
 
 .front{
-    font-size:38px;
-    font-weight:bold;
+
+    font-size:42px;
+
+    font-weight:700;
+
     text-align:center;
-    margin-top:50px;
+
+    margin-top:40px;
+
     margin-bottom:50px;
+
+    color:var(--primary);
+
     word-break:break-word;
 }
 
 .back{
-    font-size:28px;
+
+    font-size:30px;
+
+    font-weight:600;
+
     text-align:center;
+
     color:#4ade80;
+
     min-height:60px;
+
     margin-bottom:25px;
+
     word-break:break-word;
 }
 
-/* BOTÓN RESPUESTA */
+.frase{
 
-#mostrarBtn{
-    width:100%;
-    padding:16px;
-    border:none;
-    border-radius:12px;
-    font-size:18px;
+    background:rgba(13,110,253,.12);
+
+    border-radius:20px;
+
+    padding:25px;
+
+    font-size:2rem;
+
+    text-align:center;
+
     font-weight:bold;
-    background:#0d6efd;
-    color:white;
+
+    margin:20px 0;
+}
+
+/* =========================
+   INFORMACIÓN
+========================= */
+
+#info{
+
+    text-align:center;
+
+    color:var(--secondary);
+
+    font-size:14px;
+
     margin-bottom:20px;
+}
+
+/* =========================
+   BOTONES
+========================= */
+
+button{
+
+    transition:.2s;
+
     cursor:pointer;
 }
 
-#mostrarBtn:hover{
-    opacity:.9;
+button:hover{
+
+    transform:translateY(-2px);
 }
 
-/* BOTONES ACCIÓN */
+#mostrarBtn{
+
+    width:100%;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:14px;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    background:var(--primary);
+
+    color:white;
+
+    margin-bottom:20px;
+}
+
+#mostrarBtn:hover{
+
+    background:var(--primary-hover);
+}
+
+/* =========================
+   BOTONES ACCIÓN
+========================= */
 
 .actions{
+
     display:flex;
-    justify-content:space-between;
+
     gap:10px;
+
     margin-bottom:20px;
 }
 
 .actions button{
+
     flex:1;
+
     padding:15px;
+
     border:none;
+
     border-radius:12px;
+
     font-size:22px;
+
     background:#2d2d2d;
+
     color:white;
-    cursor:pointer;
 }
 
-.actions button:hover{
-    background:#3a3a3a;
-}
-
-/* BOTONES APRENDIZAJE */
+/* =========================
+   BOTONES APRENDIZAJE
+========================= */
 
 .learn{
+
     display:flex;
+
     gap:10px;
 }
 
 .learn button{
+
     flex:1;
+
     padding:15px;
+
     border:none;
+
     border-radius:12px;
+
     font-weight:bold;
+
     font-size:16px;
-    cursor:pointer;
 }
 
 .bad{
-    background:#dc3545;
+
+    background:var(--danger);
+
     color:white;
 }
 
 .good{
-    background:#198754;
+
+    background:var(--success);
+
     color:white;
 }
 
-.bad:hover{
-    opacity:.9;
+/* =========================
+   RESULTADOS
+========================= */
+
+.correcto{
+
+    color:var(--success);
+
+    font-weight:bold;
+
+    text-align:center;
+
+    animation:zoom .3s;
 }
 
-.good:hover{
-    opacity:.9;
+.incorrecto{
+
+    color:var(--danger);
+
+    font-weight:bold;
+
+    text-align:center;
+
+    animation:zoom .3s;
 }
 
-/* MENÚ INFERIOR */
+@keyframes zoom{
+
+    from{
+        transform:scale(.8);
+    }
+
+    to{
+        transform:scale(1);
+    }
+
+}
+
+/* =========================
+   XP
+========================= */
+
+.xp-container{
+
+    width:100%;
+
+    height:20px;
+
+    background:#2d2d2d;
+
+    border-radius:999px;
+
+    overflow:hidden;
+}
+
+#barraXP{
+
+    width:0%;
+
+    height:100%;
+
+    background:
+    linear-gradient(
+        90deg,
+        #22c55e,
+        #4ade80
+    );
+
+    transition:.5s;
+}
+
+/* =========================
+   LOGROS
+========================= */
+
+.logro{
+
+    background:rgba(255,215,0,.15);
+
+    border-left:4px solid gold;
+
+    padding:10px;
+
+    border-radius:10px;
+
+    margin-bottom:10px;
+}
+
+/* =========================
+   NAV INFERIOR
+========================= */
 
 nav{
+
     position:fixed;
+
     bottom:0;
+
     left:0;
+
     right:0;
+
     max-width:500px;
+
     margin:auto;
-    background:#1e1e1e;
-    border-top:1px solid #333;
+
+    background:var(--header);
+
+    border-top:
+    1px solid var(--border);
+
     display:flex;
+
     justify-content:space-around;
+
     padding:12px;
 }
 
 nav button{
+
     background:none;
+
     border:none;
-    color:white;
+
+    color:var(--text);
+
     font-size:24px;
-    cursor:pointer;
 }
 
-nav button:hover{
-    transform:scale(1.1);
-}
+/* =========================
+   RESPONSIVE
+========================= */
 
-/* RESPONSIVE */
+@media(max-width:768px){
+
+    main{
+
+        padding:15px;
+        padding-bottom:90px;
+    }
+
+    .frase{
+
+        font-size:1.6rem;
+    }
+
+    button{
+
+        width:100%;
+    }
+
+}
 
 @media(max-width:480px){
 
+    body{
+
+        max-width:100%;
+    }
+
+    header h1{
+
+        font-size:24px;
+    }
+
     .front{
+
         font-size:30px;
     }
 
     .back{
+
         font-size:24px;
     }
 
-    header h1{
-        font-size:24px;
+    .frase{
+
+        font-size:1.3rem;
+
+        padding:20px;
     }
 
     .card{
+
         min-height:380px;
+    }
+
+    .mini-card{
+
+        font-size:16px;
+    }
+
+    .mini-card span{
+
+        font-size:18px;
+    }
+
+    .stat-box span{
+
+        font-size:20px;
     }
 }
