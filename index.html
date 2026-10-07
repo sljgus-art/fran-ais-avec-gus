@@ -80,6 +80,18 @@ input{
 </style>
 </head>
 
+<nav>
+
+    <button onclick="mostrarPantalla('aprender')">
+        📚
+    </button>
+
+    <button onclick="mostrarPantalla('flashcards')">
+        🃏
+    </button>
+
+</nav>
+    
 <body>
 
 <h1>🇫🇷 Français Coach</h1>
@@ -743,6 +755,56 @@ actualizarDashboard();
 actualizarRacha();
 seleccionarPendiente();
 
+<div id="pantallaFlashcards" style="display:none;">
+
+    <div class="card">
+
+        <h2>🃏 Flashcards</h2>
+
+        <div id="flashInfo">
+            Tarjeta de vocabulario
+        </div>
+
+        <div class="front" id="flashFrances">
+            Bonjour
+        </div>
+
+        <div class="back" id="flashEspanol">
+            ???
+        </div>
+
+        <button id="mostrarBtn" onclick="mostrarRespuestaFlash()">
+            Mostrar respuesta
+        </button>
+
+        <div class="actions">
+
+            <button onclick="escucharFlashcard()">
+                🔊
+            </button>
+
+            <button onclick="siguienteFlashcard()">
+                ➡️
+            </button>
+
+        </div>
+
+        <div class="learn">
+
+            <button class="bad" onclick="marcarFlashcard(false)">
+                😵 Difícil
+            </button>
+
+            <button class="good" onclick="marcarFlashcard(true)">
+                ✅ Fácil
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+    
 </script>
 
 </body>
