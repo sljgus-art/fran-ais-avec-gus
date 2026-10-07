@@ -524,3 +524,183 @@ seleccionarPendiente,
 }
 
 function comprobar(){
+
+const texto=
+document
+.getElementById("respuesta")
+.value
+.trim()
+.toLowerCase();
+
+const correcta=
+ejercicioActual.espanol
+.toLowerCase();
+
+estadisticas.respuestas++;
+
+if(texto===correcta){
+
+estadisticas.aciertos++;
+
+actualizarRepaso(true);
+
+resultado.className=
+"correcto";
+
+resultado.textContent=
+"✅ Correcto";
+
+}else{
+
+estadisticas.fallos++;
+
+actualizarRepaso(false);
+
+resultado.className=
+"incorrecto";
+
+resultado.textContent=
+"❌ Correcto: "+
+ejercicioActual.espanol;
+
+}
+
+guardarEstadisticas();
+
+actualizarDashboard();
+
+setTimeout(
+seleccionarPendiente,
+1500
+);
+
+}
+
+function actualizarDashboard(){
+
+document.getElementById(
+"totalRespuestas"
+).textContent=
+estadisticas.respuestas;
+
+document.getElementById(
+"aciertos"
+).textContent=
+estadisticas.aciertos;
+
+document.getElementById(
+"fallos"
+).textContent=
+estadisticas.fallos;
+
+const porcentaje=
+estadisticas.respuestas
+?
+Math.round(
+estadisticas.aciertos
+/
+estadisticas.respuestas
+*100
+)
+:0;
+
+document.getElementById(
+"porcentaje"
+).textContent=
+porcentaje;
+
+}
+
+function actualizarRacha(){
+
+const hoy=
+new Date()
+.toISOString()
+.split("T")[0];
+
+let racha=
+Number(
+localStorage.getItem(
+"racha"
+)
+)||0;
+
+const ultimo=
+localStorage.getItem(
+"ultimoEstudio"
+);
+
+if(!ultimo){
+
+racha=1;
+
+}else{
+
+const ayer=
+new Date();
+
+ayer.setDate(
+ayer.getDate()-1
+);
+
+const fechaAyer=
+ayer
+.toISOString()
+.split("T")[0];
+
+if(
+ultimo===fechaAyer
+){
+racha++;
+}
+else if(
+ultimo!==hoy
+){
+racha=1;
+}
+
+}
+
+localStorage.setItem(
+"racha",
+racha
+);
+
+localStorage.setItem(
+"ultimoEstudio",
+hoy
+);
+
+document.getElementById(
+"racha"
+).textContent=
+racha;
+
+}
+
+function escucharFrances(){
+
+if(!ejercicioActual)
+return;
+
+const voz=
+new SpeechSynthesisUtterance(
+ejercicioActual.frances
+);
+
+voz.lang="fr-FR";
+
+speechSynthesis.speak(
+voz
+);
+
+}
+
+actualizarDashboard();
+actualizarRacha();
+seleccionarPendiente();
+
+</script>
+
+</body>
+</html>
