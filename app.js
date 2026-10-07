@@ -212,6 +212,85 @@ function actualizarEstadisticas(){
         tarjetas.length;
 }
 
+function irInicio(){
+
+    indice = 0;
+
+    cargarTarjeta();
+}
+
+function mostrarTodas(){
+
+    nivelFilter.value = "Todos";
+
+    filtrarNivel();
+
+    alert("📚 Mostrando todas las tarjetas");
+}
+
+function mostrarResumen(){
+
+    let progreso =
+        JSON.parse(
+            localStorage.getItem("francesGus")
+        ) || {};
+
+    let aprendidas = 0;
+    let dificiles = 0;
+
+    Object.values(progreso)
+    .forEach(item => {
+
+        if(item.aprendido){
+
+            aprendidas++;
+
+        }else{
+
+            dificiles++;
+        }
+    });
+
+    const porcentaje =
+        tarjetas.length > 0
+            ? Math.round(
+                (aprendidas / tarjetas.length) * 100
+            )
+            : 0;
+
+    alert(
+`📊 RESUMEN
+
+✅ Aprendidas: ${aprendidas}
+
+❌ Difíciles: ${dificiles}
+
+📚 Total: ${tarjetas.length}
+
+🎯 Progreso: ${porcentaje}%`
+    );
+}
+
+function reiniciarProgreso(){
+
+    if(
+        confirm(
+            "¿Seguro que quieres borrar todo el progreso?"
+        )
+    ){
+
+        localStorage.removeItem(
+            "francesGus"
+        );
+
+        actualizarEstadisticas();
+
+        alert(
+            "✅ Progreso reiniciado"
+        );
+    }
+}
+
 if("serviceWorker" in navigator){
 
     window.addEventListener(
