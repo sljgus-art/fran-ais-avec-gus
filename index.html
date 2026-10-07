@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Français Coach</title>
 
 <style>
 body{
     font-family:Arial,sans-serif;
     background:#121212;
-    color:white;
+    color:#fff;
+    margin:0;
+    padding:20px;
     max-width:800px;
     margin:auto;
-    padding:20px;
 }
 
 h1,h2{
@@ -22,16 +22,16 @@ h1,h2{
 
 .card{
     background:#1e1e1e;
-    padding:20px;
     border-radius:12px;
-    margin-bottom:20px;
+    padding:15px;
+    margin-bottom:15px;
 }
 
 button{
     background:#2563eb;
     color:white;
     border:none;
-    padding:10px 15px;
+    padding:12px;
     border-radius:8px;
     cursor:pointer;
     margin:5px;
@@ -43,10 +43,17 @@ button:hover{
 
 input{
     width:100%;
-    padding:10px;
+    padding:12px;
     border-radius:8px;
     border:none;
-    margin:10px 0;
+    margin-top:10px;
+    box-sizing:border-box;
+}
+
+.frase{
+    font-size:1.5rem;
+    text-align:center;
+    margin:20px 0;
 }
 
 .correcto{
@@ -59,31 +66,42 @@ input{
     font-weight:bold;
 }
 
-.estadisticas p{
-    margin:6px 0;
-}
-
-.frase{
-    font-size:1.4rem;
-    text-align:center;
-    margin-bottom:20px;
-}
-
 .racha{
     text-align:center;
-    font-size:1.2rem;
     color:#facc15;
+    font-size:1.2rem;
+}
+
+#zonaTest button{
+    width:100%;
+    display:block;
+    margin-bottom:10px;
 }
 </style>
 </head>
+
 <body>
 
 <h1>🇫🇷 Français Coach</h1>
 
 <div class="card">
     <div class="racha">
-        🔥 Racha: <span id="racha">0</span> días
+        🔥 Racha:
+        <span id="racha">0</span>
+        días
     </div>
+</div>
+
+<div class="card">
+    <h2>Modo de aprendizaje</h2>
+
+    <button onclick="cambiarModo('test')">
+        ✅ Test
+    </button>
+
+    <button onclick="cambiarModo('escritura')">
+        ✍️ Escritura
+    </button>
 </div>
 
 <div class="card">
@@ -96,45 +114,47 @@ input{
         🔊 Escuchar
     </button>
 
-    <input
-        type="text"
-        id="respuesta"
-        placeholder="Escribe la traducción"
-    >
+    <div id="zonaTest"></div>
 
-    <button onclick="comprobar()">
-        Comprobar
-    </button>
+    <div id="zonaEscritura">
+
+        <input
+            type="text"
+            id="respuesta"
+            placeholder="Escribe la traducción">
+
+        <button onclick="comprobar()">
+            Comprobar
+        </button>
+
+    </div>
 
     <p id="resultado"></p>
 
 </div>
 
-<div class="card estadisticas">
+<div class="card">
+<h2>📊 Estadísticas</h2>
 
-    <h2>📊 Estadísticas</h2>
+<p>Total respuestas:
+<span id="totalRespuestas">0</span></p>
 
-    <p>Total respuestas:
-        <span id="totalRespuestas">0</span>
-    </p>
+<p>Aciertos:
+<span id="aciertos">0</span></p>
 
-    <p>Aciertos:
-        <span id="aciertos">0</span>
-    </p>
+<p>Fallos:
+<span id="fallos">0</span></p>
 
-    <p>Fallos:
-        <span id="fallos">0</span>
-    </p>
-
-    <p>% éxito:
-        <span id="porcentaje">0</span>%
-    </p>
+<p>% Éxito:
+<span id="porcentaje">0</span>%</p>
 
 </div>
 
 <script>
 
-const frases = [
+let modo="test";
+
+const frases=[
 
 {
 id:1,
@@ -144,50 +164,50 @@ espanol:"hola"
 
 {
 id:2,
-frances:"Je vais au travail",
-espanol:"voy al trabajo"
-},
-
-{
-id:3,
-frances:"J'aime apprendre le français",
-espanol:"me gusta aprender francés"
-},
-
-{
-id:4,
-frances:"Il fait beau aujourd'hui",
-espanol:"hace buen tiempo hoy"
-},
-
-{
-id:5,
-frances:"Je voudrais un café",
-espanol:"quisiera un café"
-},
-
-{
-id:6,
-frances:"Comment allez-vous ?",
-espanol:"cómo está usted"
-},
-
-{
-id:7,
 frances:"Merci beaucoup",
 espanol:"muchas gracias"
 },
 
 {
-id:8,
+id:3,
+frances:"Je vais au travail",
+espanol:"voy al trabajo"
+},
+
+{
+id:4,
 frances:"Je suis fatigué",
 espanol:"estoy cansado"
 },
 
 {
-id:9,
+id:5,
 frances:"Où est la gare ?",
 espanol:"dónde está la estación"
+},
+
+{
+id:6,
+frances:"Je voudrais un café",
+espanol:"quisiera un café"
+},
+
+{
+id:7,
+frances:"Comment allez-vous ?",
+espanol:"cómo está usted"
+},
+
+{
+id:8,
+frances:"J'aime apprendre le français",
+espanol:"me gusta aprender francés"
+},
+
+{
+id:9,
+frances:"Il fait beau aujourd'hui",
+espanol:"hace buen tiempo hoy"
 },
 
 {
@@ -198,9 +218,9 @@ espanol:"hablo un poco de francés"
 
 ];
 
-let ejercicioActual = null;
+let ejercicioActual=null;
 
-const estadisticas =
+const estadisticas=
 JSON.parse(
 localStorage.getItem("estadisticas")
 )
@@ -222,35 +242,31 @@ JSON.stringify(estadisticas)
 
 function obtenerRepasos(){
 
-let datos =
+let datos=
 JSON.parse(
 localStorage.getItem("repasos")
 );
 
 if(!datos){
 
-datos = {};
+datos={};
 
-frases.forEach(f => {
+frases.forEach(f=>{
 
-datos[f.id] = {
-
+datos[f.id]={
 aciertos:0,
 fallos:0,
 proximoRepaso:0
-
 };
 
 });
 
-localStorage.setItem(
-"repasos",
-JSON.stringify(datos)
-);
+guardarRepasos(datos);
 
 }
 
 return datos;
+
 }
 
 function guardarRepasos(datos){
@@ -262,107 +278,188 @@ JSON.stringify(datos)
 
 }
 
-function seleccionarPendiente(){
+function barajar(array){
 
-const repasos =
-obtenerRepasos();
+for(let i=array.length-1;i>0;i--){
 
-const ahora =
-Date.now();
-
-let pendientes =
-frases.filter(f =>
-
-repasos[f.id].proximoRepaso <= ahora
-
+const j=
+Math.floor(
+Math.random()*(i+1)
 );
 
-if(pendientes.length===0){
-
-pendientes = frases;
+[array[i],array[j]]=
+[array[j],array[i]];
 
 }
 
-ejercicioActual =
+return array;
+
+}
+
+function generarOpciones(frase){
+
+const opciones=[
+frase.espanol
+];
+
+while(opciones.length<4){
+
+const candidata=
+
+frases[
+Math.floor(
+Math.random()*frases.length
+)
+].espanol;
+
+if(
+!opciones.includes(
+candidata
+)
+){
+opciones.push(candidata);
+}
+
+}
+
+return barajar(opciones);
+
+}
+
+function cambiarModo(nuevoModo){
+
+modo=nuevoModo;
+
+seleccionarPendiente();
+
+}
+
+function seleccionarPendiente(){
+
+const repasos=
+obtenerRepasos();
+
+const ahora=
+Date.now();
+
+let pendientes=
+frases.filter(f=>
+repasos[f.id].proximoRepaso<=ahora
+);
+
+if(
+pendientes.length===0
+){
+pendientes=frases;
+}
+
+ejercicioActual=
 pendientes[
 Math.floor(
-Math.random()*pendientes.length
+Math.random()*
+pendientes.length
 )
 ];
 
 document.getElementById(
 "pregunta"
-).textContent =
+).textContent=
 ejercicioActual.frances;
+
+document.getElementById(
+"resultado"
+).textContent="";
+
+if(modo==="test"){
+
+mostrarModoTest();
+
+}else{
+
+document.getElementById(
+"zonaTest"
+).innerHTML="";
+
+document.getElementById(
+"zonaEscritura"
+).style.display="block";
 
 document.getElementById(
 "respuesta"
 ).value="";
 
-document.getElementById(
-"resultado"
-).textContent="";
 }
 
-function comprobar(){
+}
 
-const respuestaUsuario =
+function mostrarModoTest(){
+
 document.getElementById(
-"respuesta"
-).value
-.trim()
-.toLowerCase();
+"zonaEscritura"
+).style.display="none";
 
-const correcta =
-ejercicioActual.espanol
-.trim()
-.toLowerCase();
-
-const resultado =
+const zona=
 document.getElementById(
-"resultado"
+"zonaTest"
 );
 
-const repasos =
+zona.innerHTML="";
+
+const opciones=
+generarOpciones(
+ejercicioActual
+);
+
+opciones.forEach(opcion=>{
+
+const btn=
+document.createElement(
+"button"
+);
+
+btn.textContent=
+opcion;
+
+btn.onclick=()=>{
+
+responderTest(
+opcion
+);
+
+};
+
+zona.appendChild(btn);
+
+});
+
+}
+
+function actualizarRepaso(correcto){
+
+const repasos=
 obtenerRepasos();
 
-estadisticas.respuestas++;
-
-if(respuestaUsuario===correcta){
-
-estadisticas.aciertos++;
+if(correcto){
 
 repasos[
 ejercicioActual.id
 ].aciertos++;
 
-const nivel =
+const nivel=
+
 repasos[
 ejercicioActual.id
 ].aciertos;
 
-const dias =
-Math.min(30,nivel);
-
 repasos[
 ejercicioActual.id
-].proximoRepaso =
-Date.now() +
-dias *
-24 *
-60 *
-60 *
-1000;
+].proximoRepaso=
 
-resultado.className =
-"correcto";
-
-resultado.textContent =
-"✅ Correcto";
+Date.now()+
+Math.min(30,nivel)*
+24*60*60*1000;
 
 }else{
-
-estadisticas.fallos++;
 
 repasos[
 ejercicioActual.id
@@ -370,27 +467,54 @@ ejercicioActual.id
 
 repasos[
 ejercicioActual.id
-].proximoRepaso =
-Date.now() +
-24 *
-60 *
-60 *
-1000;
+].proximoRepaso=
 
-resultado.className =
-"incorrecto";
-
-resultado.textContent =
-"❌ Correcto: " +
-ejercicioActual.espanol;
+Date.now()+
+24*60*60*1000;
 
 }
 
 guardarRepasos(repasos);
+
+}
+
+function responderTest(respuesta){
+
+const correcta=
+ejercicioActual.espanol;
+
+estadisticas.respuestas++;
+
+if(respuesta===correcta){
+
+estadisticas.aciertos++;
+
+actualizarRepaso(true);
+
+resultado.className=
+"correcto";
+
+resultado.textContent=
+"✅ Correcto";
+
+}else{
+
+estadisticas.fallos++;
+
+actualizarRepaso(false);
+
+resultado.className=
+"incorrecto";
+
+resultado.textContent=
+"❌ Correcto: "+
+correcta;
+
+}
+
 guardarEstadisticas();
 
 actualizarDashboard();
-actualizarRacha();
 
 setTimeout(
 seleccionarPendiente,
@@ -399,133 +523,4 @@ seleccionarPendiente,
 
 }
 
-function actualizarDashboard(){
-
-document.getElementById(
-"totalRespuestas"
-).textContent =
-estadisticas.respuestas;
-
-document.getElementById(
-"aciertos"
-).textContent =
-estadisticas.aciertos;
-
-document.getElementById(
-"fallos"
-).textContent =
-estadisticas.fallos;
-
-const porcentaje =
-estadisticas.respuestas
-?
-Math.round(
-estadisticas.aciertos
-/
-estadisticas.respuestas
-*
-100
-)
-:
-0;
-
-document.getElementById(
-"porcentaje"
-).textContent =
-porcentaje;
-
-}
-
-function actualizarRacha(){
-
-const hoy =
-new Date()
-.toISOString()
-.split("T")[0];
-
-let racha =
-parseInt(
-localStorage.getItem("racha")
-) || 0;
-
-const ultimo =
-localStorage.getItem(
-"ultimoEstudio"
-);
-
-if(!ultimo){
-
-racha = 1;
-
-}
-else{
-
-const ayer =
-new Date();
-
-ayer.setDate(
-ayer.getDate()-1
-);
-
-const fechaAyer =
-ayer
-.toISOString()
-.split("T")[0];
-
-if(ultimo===fechaAyer){
-
-racha++;
-
-}
-else if(
-ultimo!==hoy
-){
-
-racha=1;
-
-}
-
-}
-
-localStorage.setItem(
-"racha",
-racha
-);
-
-localStorage.setItem(
-"ultimoEstudio",
-hoy
-);
-
-document.getElementById(
-"racha"
-).textContent =
-racha;
-
-}
-
-function escucharFrances(){
-
-if(!ejercicioActual) return;
-
-const voz =
-new SpeechSynthesisUtterance(
-ejercicioActual.frances
-);
-
-voz.lang="fr-FR";
-
-speechSynthesis.speak(
-voz
-);
-
-}
-
-actualizarDashboard();
-actualizarRacha();
-seleccionarPendiente();
-
-</script>
-
-</body>
-</html>
+function comprobar(){
