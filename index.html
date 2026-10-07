@@ -94,6 +94,8 @@ input{
     
 <body>
 
+<div id="pantallaAprender">   
+    
 <h1>🇫🇷 Français Coach</h1>
 
 <div class="card">
@@ -274,6 +276,7 @@ espanol:"hablo un poco de francés"
 ];
 
 let ejercicioActual=null;
+let flashcardActual = null;    
 
 const estadisticas=
 JSON.parse(
@@ -734,7 +737,145 @@ racha;
 }
 
 function escucharFrances(){
+function mostrarPantalla(tipo){
 
+    document.getElementById(
+        "pantallaAprender"
+    ).style.display =
+    tipo === "aprender"
+    ? "block"
+    : "none";
+
+    document.getElementById(
+        "pantallaFlashcards"
+    ).style.display =
+    tipo === "flashcards"
+    ? "block"
+    : "none";
+
+    if(tipo === "flashcards"){
+        cargarFlashcard();
+    }
+
+}
+
+function cargarFlashcard(){
+
+    const repasos =
+    obtenerRepasos();
+
+    const ahora =
+    Date.now();
+
+    let pendientes =
+    frases.filter(f =>
+        repasos[f.id].proximoRepaso <= ahora
+    );
+
+    if(pendientes.length===0){
+
+        pendientes = frases;
+
+    }
+
+    flashcardActual =
+    pendientes[
+        Math.floor(
+            Math.random()*
+            pendientes.length
+        )
+    ];
+
+    document.getElementById(
+        "flashFrances"
+    ).textContent =
+    flashcardActual.frances;
+
+    document.getElementById(
+        "flashEspanol"
+    ).textContent =
+    "???";
+
+}    
+
+function mostrarRespuestaFlash(){
+
+    document.getElementById(
+        "flashEspanol"
+    ).textContent =
+    flashcardActual.espanol;
+
+}
+
+function siguienteFlashcard(){
+
+    cargarFlashcard();
+
+}
+
+function escucharFlashcard(){
+
+    if(!flashcardActual) return;
+
+    const voz =
+    new SpeechSynthesisUtterance(
+        flashcardActual.frances
+    );
+
+    voz.lang="fr-FR";
+
+    speechSynthesis.speak(
+        voz
+    );
+
+}    
+
+function marcarFlashcard(correcto){
+
+    const repasos =
+    obtenerRepasos();
+
+    if(correcto){
+
+        repasos[
+            flashcardActual.id
+        ].aciertos++;
+
+        const aciertos =
+        repasos[
+            flashcardActual.id
+        ].aciertos;
+
+        repasos[
+            flashcardActual.id
+        ].proximoRepaso =
+        Date.now() +
+        Math.min(30,aciertos) *
+        24*60*60*1000;
+
+    }else{
+
+        repasos[
+            flashcardActual.id
+        ].fallos++;
+
+        repasos[
+            flashcardActual.id
+        ].proximoRepaso =
+        Date.now() +
+        24*60*60*1000;
+
+    }
+
+    guardarRepasos(repasos);
+
+    setTimeout(
+        cargarFlashcard,
+        300
+    );
+
+}    
+    
 if(!ejercicioActual)
 return;
 
@@ -755,6 +896,8 @@ actualizarDashboard();
 actualizarRacha();
 seleccionarPendiente();
 
+</div>    
+    
 <div id="pantallaFlashcards" style="display:none;">
 
     <div class="card">
