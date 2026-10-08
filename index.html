@@ -4,173 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta name="theme-color" content="#111827">
+    <meta name="description" content="Français avec Gus - aprende francés de A1 a B2">
+
     <title>Français avec Gus</title>
 
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 </head>
 
-<body class="dark">
+<body>
 
-<header>
-    <h1>🇫🇷 Français avec Gus</h1>
-    <p>Flashcards de francés A1-B2</p>
+<header class="app-header">
+    <div>
+        <div class="logo">🇫🇷 Français avec Gus</div>
+        <div class="subtitle">Aprende francés de A1 a B2</div>
+    </div>
+
+    <button id="headerNivelBtn" class="header-level">
+        A1
+    </button>
 </header>
 
-<main>
 
-    <!-- ESTADÍSTICAS -->
-    <section class="stats-top">
+<main class="app">
 
-        <div class="mini-card">
-            <span class="mini-icon">✅</span>
-            <span id="aprendidas">0</span>
-            <small>Aprendidas</small>
+    <!-- =====================================================
+         INICIO
+    ====================================================== -->
+
+    <section id="inicioView" class="view active">
+
+        <div class="welcome">
+            <p class="eyebrow">BIENVENIDO</p>
+            <h1>Tu francés, paso a paso.</h1>
+            <p>
+                Aprende vocabulario, practica, escribe y comprueba
+                tus conocimientos.
+            </p>
         </div>
 
-        <div class="mini-card">
-            <span class="mini-icon">❌</span>
-            <span id="dificiles">0</span>
-            <small>Difíciles</small>
-        </div>
+        <div class="level-selector card-box">
 
-        <div class="mini-card">
-            <span class="mini-icon">⭐</span>
-            <span id="favoritas">0</span>
-            <small>Favoritas</small>
-        </div>
+            <div>
+                <span class="section-label">Mi nivel</span>
+                <strong id="nivelActualTexto">A1</strong>
+            </div>
 
-        <div class="mini-card">
-            <span class="mini-icon">📚</span>
-            <span id="total">0</span>
-            <small>Total</small>
-        </div>
-
-    </section>
-
-
-    <!-- FILTROS -->
-    <section class="filters">
-
-        <div class="filter-group">
-            <label for="nivelFilter">Nivel</label>
-
-            <select id="nivelFilter">
-                <option value="Todos">Todos los niveles</option>
-                <option value="A1">A1</option>
-                <option value="A2">A2</option>
-                <option value="B1">B1</option>
-                <option value="B2">B2</option>
+            <select id="nivelInicio">
+                <option value="A1">A1 — Inicial</option>
+                <option value="A2">A2 — Básico</option>
+                <option value="B1">B1 — Intermedio</option>
+                <option value="B2">B2 — Intermedio alto</option>
+                <option value="TODOS">Todos los niveles</option>
             </select>
-        </div>
-
-
-        <div class="filter-group">
-            <label for="modoFiltro">Mostrar</label>
-
-            <select id="modoFiltro">
-                <option value="todas">Todas</option>
-                <option value="favoritas">⭐ Favoritas</option>
-                <option value="aprendidas">✅ Aprendidas</option>
-                <option value="dificiles">❌ Difíciles</option>
-                <option value="pendientes">⏳ Pendientes</option>
-            </select>
-        </div>
-
-    </section>
-
-
-    <!-- CONTADOR -->
-    <div id="contador">
-        Tarjeta 0 de 0
-    </div>
-
-
-    <!-- PROGRESO -->
-    <progress
-        id="barraProgreso"
-        value="0"
-        max="100">
-    </progress>
-
-
-    <!-- INFORMACIÓN DE LA TARJETA -->
-    <div id="info">
-        Cargando...
-    </div>
-
-
-    <!-- TARJETA -->
-    <section class="card">
-
-        <div id="frances" class="front">
-            Cargando...
-        </div>
-
-        <div id="espanol" class="back"></div>
-
-
-        <!-- BOTONES PRINCIPALES -->
-        <div class="main-actions">
-
-            <button
-                id="mostrarBtn"
-                type="button">
-                👁️ Mostrar respuesta
-            </button>
-
-            <button
-                id="favoritaBtn"
-                type="button"
-                class="favorite-btn">
-                ☆ Favorita
-            </button>
 
         </div>
 
 
-        <!-- NAVEGACIÓN -->
-        <div class="actions">
+        <div class="progress-card card-box">
 
-            <button
-                id="anteriorBtn"
-                type="button"
-                aria-label="Tarjeta anterior">
-                ⬅️
-            </button>
+            <div class="progress-header">
+                <span>Progreso</span>
+                <strong id="progresoPorcentaje">0%</strong>
+            </div>
 
-            <button
-                id="escucharBtn"
-                type="button"
-                aria-label="Escuchar pronunciación">
-                🔊
-            </button>
+            <div class="progress-track">
+                <div id="progresoInicio" class="progress-fill"></div>
+            </div>
 
-            <button
-                id="siguienteBtn"
-                type="button"
-                aria-label="Tarjeta siguiente">
-                ➡️
-            </button>
+            <div class="progress-details">
+                <span><strong id="inicioAprendidas">0</strong> aprendidas</span>
+                <span><strong id="inicioPendientes">0</strong> pendientes</span>
+                <span><strong id="inicioDificiles">0</strong> difíciles</span>
+            </div>
 
         </div>
 
 
-        <!-- APRENDIZAJE -->
-        <div class="learn">
+        <div class="quick-grid">
 
-            <button
-                id="dificilBtn"
-                type="button"
-                class="bad">
-                😵 Difícil
+            <button class="feature-card" data-view="repasoView">
+                <span class="feature-icon">🔄</span>
+                <strong>Repasar</strong>
+                <small id="repasoPendientesTexto">Repasa lo que necesitas</small>
             </button>
 
-            <button
-                id="facilBtn"
-                type="button"
-                class="good">
-                ✅ Fácil
+            <button class="feature-card" data-view="flashcardsView">
+                <span class="feature-icon">🃏</span>
+                <strong>Flashcards</strong>
+                <small>Aprende vocabulario</small>
+            </button>
+
+            <button class="feature-card" data-view="practicaView">
+                <span class="feature-icon">🎯</span>
+                <strong>Practicar</strong>
+                <small>Ejercicios rápidos</small>
+            </button>
+
+            <button class="feature-card" data-view="escrituraView">
+                <span class="feature-icon">✍️</span>
+                <strong>Escritura</strong>
+                <small>Traduce al francés</small>
+            </button>
+
+            <button class="feature-card" data-view="examenView">
+                <span class="feature-icon">📝</span>
+                <strong>Exámenes</strong>
+                <small>Pon a prueba tu nivel</small>
+            </button>
+
+            <button class="feature-card" data-view="progresoView">
+                <span class="feature-icon">📊</span>
+                <strong>Mi progreso</strong>
+                <small>Consulta tus estadísticas</small>
             </button>
 
         </div>
@@ -178,45 +125,563 @@
     </section>
 
 
-    <!-- MENSAJES -->
-    <div
-        id="mensaje"
-        class="mensaje"
-        aria-live="polite">
-    </div>
+    <!-- =====================================================
+         FLASHCARDS
+    ====================================================== -->
+
+    <section id="flashcardsView" class="view">
+
+        <div class="view-heading">
+            <div>
+                <span class="eyebrow">APRENDER</span>
+                <h2>Flashcards</h2>
+            </div>
+
+            <button class="small-button" data-view="inicioView">
+                ← Inicio
+            </button>
+        </div>
+
+
+        <div class="filters card-box">
+
+            <label>
+                Nivel
+                <select id="nivelFilter">
+                    <option value="TODOS">Todos</option>
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                </select>
+            </label>
+
+            <label>
+                Mostrar
+                <select id="modoFiltro">
+                    <option value="todas">Todas</option>
+                    <option value="pendientes">Pendientes</option>
+                    <option value="dificiles">Difíciles</option>
+                    <option value="favoritas">Favoritas</option>
+                    <option value="aprendidas">Aprendidas</option>
+                </select>
+            </label>
+
+        </div>
+
+
+        <div class="flashcard-status">
+            <span id="contador">0 / 0</span>
+            <span id="info">Preparando...</span>
+        </div>
+
+        <div class="progress-track">
+            <div id="barraProgreso" class="progress-fill"></div>
+        </div>
+
+
+        <article class="flashcard">
+
+            <div class="flashcard-top">
+                <span id="tipoTarjeta" class="tag">VOCABULARIO</span>
+                <button id="favoritaBtn" class="icon-button" title="Favorita">
+                    ☆
+                </button>
+            </div>
+
+            <div class="flashcard-content">
+
+                <p class="language-label">FRANÇAIS</p>
+
+                <div id="frances" class="french-text">
+                    —
+                </div>
+
+                <button id="escucharBtn" class="audio-button">
+                    🔊 Escuchar
+                </button>
+
+                <div id="respuestaBox" class="answer-box hidden">
+
+                    <p class="language-label">ESPAÑOL</p>
+
+                    <div id="espanol" class="spanish-text">
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <button id="mostrarBtn" class="primary-button">
+            Mostrar traducción
+        </button>
+
+
+        <div class="flashcard-actions">
+
+            <button id="anteriorBtn" class="secondary-button">
+                ← Anterior
+            </button>
+
+            <button id="dificilBtn" class="danger-button">
+                😓 Difícil
+            </button>
+
+            <button id="facilBtn" class="success-button">
+                👍 Fácil
+            </button>
+
+            <button id="siguienteBtn" class="secondary-button">
+                Siguiente →
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         REPASO
+    ====================================================== -->
+
+    <section id="repasoView" class="view">
+
+        <div class="view-heading">
+            <div>
+                <span class="eyebrow">REPASO</span>
+                <h2>Repasa lo que necesitas</h2>
+            </div>
+
+            <button class="small-button" data-view="inicioView">
+                ← Inicio
+            </button>
+        </div>
+
+        <div class="review-intro card-box">
+
+            <div class="big-icon">🔄</div>
+
+            <h3>Repaso inteligente</h3>
+
+            <p>
+                Vamos a priorizar las tarjetas que todavía no
+                dominas y las que has marcado como difíciles.
+            </p>
+
+            <div class="review-stats">
+
+                <div>
+                    <strong id="repasoPendientes">0</strong>
+                    <span>Pendientes</span>
+                </div>
+
+                <div>
+                    <strong id="repasoDificiles">0</strong>
+                    <span>Difíciles</span>
+                </div>
+
+                <div>
+                    <strong id="repasoFavoritas">0</strong>
+                    <span>Favoritas</span>
+                </div>
+
+            </div>
+
+            <button id="empezarRepasoBtn" class="primary-button">
+                Empezar repaso
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PRÁCTICA
+    ====================================================== -->
+
+    <section id="practicaView" class="view">
+
+        <div class="view-heading">
+            <div>
+                <span class="eyebrow">ENTRENAMIENTO</span>
+                <h2>Práctica</h2>
+            </div>
+
+            <button class="small-button" data-view="inicioView">
+                ← Inicio
+            </button>
+        </div>
+
+
+        <div id="practicaMenu" class="practice-menu">
+
+            <button class="practice-option" data-practice="multiple">
+                <span>🎯</span>
+                <strong>Elige la respuesta</strong>
+                <small>Selecciona la traducción correcta.</small>
+            </button>
+
+            <button class="practice-option" data-practice="reverse">
+                <span>🔄</span>
+                <strong>Traduce al francés</strong>
+                <small>Elige la traducción francesa.</small>
+            </button>
+
+            <button class="practice-option" data-practice="listening">
+                <span>🔊</span>
+                <strong>Escucha y responde</strong>
+                <small>Escucha francés y elige la respuesta.</small>
+            </button>
+
+        </div>
+
+
+        <div id="practicaGame" class="exercise-box hidden">
+
+            <div class="exercise-header">
+                <span id="ejercicioNumero">Pregunta 1</span>
+                <span id="ejercicioPuntos">0 puntos</span>
+            </div>
+
+            <div class="exercise-question">
+
+                <span id="exerciseLabel" class="language-label">
+                    TRADUCE
+                </span>
+
+                <button id="exerciseAudioBtn" class="audio-button hidden">
+                    🔊 Escuchar
+                </button>
+
+                <div id="exerciseQuestionText">
+                    —
+                </div>
+
+            </div>
+
+            <div id="exerciseOptions" class="exercise-options"></div>
+
+            <div id="exerciseFeedback" class="exercise-feedback hidden"></div>
+
+            <button id="nextExerciseBtn" class="primary-button hidden">
+                Siguiente
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ESCRITURA
+    ====================================================== -->
+
+    <section id="escrituraView" class="view">
+
+        <div class="view-heading">
+            <div>
+                <span class="eyebrow">PRODUCCIÓN</span>
+                <h2>Escritura</h2>
+            </div>
+
+            <button class="small-button" data-view="inicioView">
+                ← Inicio
+            </button>
+        </div>
+
+
+        <div id="escrituraSetup" class="writing-setup card-box">
+
+            <div class="big-icon">✍️</div>
+
+            <h3>Escribe en francés</h3>
+
+            <p>
+                Lee la frase en español y escribe su equivalente
+                en francés.
+            </p>
+
+            <button id="empezarEscrituraBtn" class="primary-button">
+                Empezar
+            </button>
+
+        </div>
+
+
+        <div id="escrituraGame" class="exercise-box hidden">
+
+            <div class="exercise-header">
+                <span id="writingNumber">Pregunta 1</span>
+                <span id="writingScore">0 aciertos</span>
+            </div>
+
+            <span class="language-label">ESPAÑOL</span>
+
+            <div id="writingPrompt" class="writing-prompt">
+                —
+            </div>
+
+            <textarea
+                id="writingInput"
+                class="writing-input"
+                placeholder="Escribe aquí en francés..."
+                autocomplete="off"
+                spellcheck="false"
+            ></textarea>
+
+            <button id="checkWritingBtn" class="primary-button">
+                Comprobar
+            </button>
+
+            <div id="writingFeedback" class="exercise-feedback hidden"></div>
+
+            <button id="nextWritingBtn" class="primary-button hidden">
+                Siguiente
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         EXÁMENES
+    ====================================================== -->
+
+    <section id="examenView" class="view">
+
+        <div class="view-heading">
+            <div>
+                <span class="eyebrow">EVALUACIÓN</span>
+                <h2>Exámenes</h2>
+            </div>
+
+            <button class="small-button" data-view="inicioView">
+                ← Inicio
+            </button>
+        </div>
+
+
+        <div id="examSetup" class="exam-setup">
+
+            <div class="exam-card">
+
+                <span class="exam-icon">🇫🇷</span>
+
+                <h3>Examen por nivel</h3>
+
+                <p>
+                    Comprueba cuánto dominas el vocabulario
+                    de un nivel.
+                </p>
+
+                <select id="examLevel">
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                </select>
+
+                <select id="examLength">
+                    <option value="10">10 preguntas</option>
+                    <option value="20">20 preguntas</option>
+                    <option value="30">30 preguntas</option>
+                </select>
+
+                <button id="startExamBtn" class="primary-button">
+                    Comenzar examen
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div id="examGame" class="exercise-box hidden">
+
+            <div class="exam-progress">
+                <span id="examQuestionNumber">Pregunta 1</span>
+                <span id="examScore">0 puntos</span>
+            </div>
+
+            <div class="question-card">
+
+                <span id="examQuestionType" class="language-label">
+                    FRANCÉS
+                </span>
+
+                <div id="examQuestion">
+                    —
+                </div>
+
+            </div>
+
+            <div id="examOptions" class="exercise-options"></div>
+
+            <div id="examFeedback" class="exercise-feedback hidden"></div>
+
+            <button id="nextExamBtn" class="primary-button hidden">
+                Siguiente
+            </button>
+
+        </div>
+
+
+        <div id="examResult" class="exam-result hidden">
+
+            <div class="result-icon">🏆</div>
+
+            <span class="eyebrow">RESULTADO</span>
+
+            <h2 id="resultTitle">Examen terminado</h2>
+
+            <div id="resultScore" class="result-score">
+                0%
+            </div>
+
+            <p id="resultText"></p>
+
+            <div class="result-stats">
+
+                <div>
+                    <strong id="resultCorrect">0</strong>
+                    <span>Correctas</span>
+                </div>
+
+                <div>
+                    <strong id="resultWrong">0</strong>
+                    <span>Falladas</span>
+                </div>
+
+            </div>
+
+            <button id="newExamBtn" class="primary-button">
+                Otro examen
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PROGRESO
+    ====================================================== -->
+
+    <section id="progresoView" class="view">
+
+        <div class="view-heading">
+            <div>
+                <span class="eyebrow">ESTADÍSTICAS</span>
+                <h2>Mi progreso</h2>
+            </div>
+
+            <button class="small-button" data-view="inicioView">
+                ← Inicio
+            </button>
+        </div>
+
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <span>📚</span>
+                <strong id="statTotal">0</strong>
+                <small>Total</small>
+            </div>
+
+            <div class="stat-card">
+                <span>✅</span>
+                <strong id="statLearned">0</strong>
+                <small>Aprendidas</small>
+            </div>
+
+            <div class="stat-card">
+                <span>😓</span>
+                <strong id="statDifficult">0</strong>
+                <small>Difíciles</small>
+            </div>
+
+            <div class="stat-card">
+                <span>⭐</span>
+                <strong id="statFavorites">0</strong>
+                <small>Favoritas</small>
+            </div>
+
+        </div>
+
+
+        <div class="card-box level-progress">
+
+            <h3>Por nivel</h3>
+
+            <div id="levelProgressList"></div>
+
+        </div>
+
+
+        <div class="card-box exam-history">
+
+            <h3>Últimos exámenes</h3>
+
+            <div id="examHistoryList">
+                <p class="empty-text">Todavía no has realizado ningún examen.</p>
+            </div>
+
+        </div>
+
+
+        <button id="resetProgressBtn" class="danger-button full-width">
+            Reiniciar progreso
+        </button>
+
+    </section>
+
+
+    <div id="mensaje" class="message"></div>
 
 </main>
 
 
-<!-- NAVEGACIÓN INFERIOR -->
+<!-- =====================================================
+     NAVEGACIÓN
+====================================================== -->
+
 <nav class="bottom-nav">
 
-    <button
-        id="inicioBtn"
-        type="button">
-        🏠
-        <span>Inicio</span>
+    <button class="nav-button active" data-view="inicioView">
+        <span>🏠</span>
+        <small>Inicio</small>
     </button>
 
-    <button
-        id="todasBtn"
-        type="button">
-        📚
-        <span>Todas</span>
+    <button class="nav-button" data-view="flashcardsView">
+        <span>🃏</span>
+        <small>Tarjetas</small>
     </button>
 
-    <button
-        id="resumenBtn"
-        type="button">
-        📊
-        <span>Resumen</span>
+    <button class="nav-button" data-view="repasoView">
+        <span>🔄</span>
+        <small>Repaso</small>
     </button>
 
-    <button
-        id="reiniciarBtn"
-        type="button">
-        ♻️
-        <span>Reiniciar</span>
+    <button class="nav-button" data-view="practicaView">
+        <span>🎯</span>
+        <small>Practicar</small>
+    </button>
+
+    <button class="nav-button" data-view="examenView">
+        <span>📝</span>
+        <small>Examen</small>
+    </button>
+
+    <button class="nav-button" data-view="progresoView">
+        <span>📊</span>
+        <small>Progreso</small>
     </button>
 
 </nav>
