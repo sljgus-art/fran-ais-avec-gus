@@ -275,466 +275,198 @@ espanol:"hablo un poco de francés"
 
 ];
 
-let ejercicioActual=null;
-let flashcardActual = null;    
+let ejercicioActual = null;
+let flashcardActual = null;
 
-const estadisticas=
+const estadisticas =
 JSON.parse(
-localStorage.getItem("estadisticas")
+    localStorage.getItem("estadisticas")
 )
 ||
 {
-respuestas:0,
-aciertos:0,
-fallos:0
+    respuestas: 0,
+    aciertos: 0,
+    fallos: 0
 };
 
 function guardarEstadisticas(){
 
-localStorage.setItem(
-"estadisticas",
-JSON.stringify(estadisticas)
-);
+    localStorage.setItem(
+        "estadisticas",
+        JSON.stringify(estadisticas)
+    );
 
 }
 
 function obtenerRepasos(){
 
-let datos=
-JSON.parse(
-localStorage.getItem("repasos")
-);
+    let datos =
+    JSON.parse(
+        localStorage.getItem("repasos")
+    );
 
-if(!datos){
+    if(!datos){
 
-datos={};
+        datos = {};
 
-frases.forEach(f=>{
+        frases.forEach(f => {
 
-datos[f.id]={
-aciertos:0,
-fallos:0,
-proximoRepaso:0
-};
+            datos[f.id] = {
+                aciertos: 0,
+                fallos: 0,
+                proximoRepaso: 0
+            };
 
-});
+        });
 
-guardarRepasos(datos);
-
-}
-
-return datos;
-
-}
-
-function guardarRepasos(datos){
-
-localStorage.setItem(
-"repasos",
-JSON.stringify(datos)
-);
-
-}
-
-function barajar(array){
-
-for(let i=array.length-1;i>0;i--){
-
-const j=
-Math.floor(
-Math.random()*(i+1)
-);
-
-[array[i],array[j]]=
-[array[j],array[i]];
-
-}
-
-return array;
-
-}
-
-function generarOpciones(frase){
-
-const opciones=[
-frase.espanol
-];
-
-while(opciones.length<4){
-
-const candidata=
-
-frases[
-Math.floor(
-Math.random()*frases.length
-)
-].espanol;
-
-if(
-!opciones.includes(
-candidata
-)
-){
-opciones.push(candidata);
-}
-
-}
-
-return barajar(opciones);
-
-}
-
-function cambiarModo(nuevoModo){
-
-modo=nuevoModo;
-
-seleccionarPendiente();
-
-}
-
-function seleccionarPendiente(){
-
-const repasos=
-obtenerRepasos();
-
-const ahora=
-Date.now();
-
-let pendientes=
-frases.filter(
-    f => repasos[f.id].proximoRepaso <= ahora
-);
-
-if(
-pendientes.length===0
-){
-pendientes=frases;
-}
-
-ejercicioActual=
-pendientes[
-Math.floor(
-Math.random()*
-pendientes.length
-)
-];
-
-document.getElementById(
-"pregunta"
-).textContent=
-ejercicioActual.frances;
-
-document.getElementById(
-"resultado"
-).textContent="";
-
-if(modo==="test"){
-
-mostrarModoTest();
-
-}else{
-
-document.getElementById(
-"zonaTest"
-).innerHTML="";
-
-document.getElementById(
-"zonaEscritura"
-).style.display="block";
-
-document.getElementById(
-"respuesta"
-).value="";
-
-}
-
-}
-
-function mostrarModoTest(){
-
-document.getElementById(
-"zonaEscritura"
-).style.display="none";
-
-const zona=
-document.getElementById(
-"zonaTest"
-);
-
-zona.innerHTML="";
-
-const opciones=
-generarOpciones(
-ejercicioActual
-);
-
-opciones.forEach(opcion=>{
-
-const btn=
-document.createElement(
-"button"
-);
-
-btn.textContent=
-opcion;
-
-btn.onclick=()=>{
-
-responderTest(
-opcion
-);
-
-};
-
-zona.appendChild(btn);
-
-});
-
-}
-
+        
 function actualizarRepaso(correcto){
 
-const repasos=
-obtenerRepasos();
+    const repasos =
+    obtenerRepasos();
 
-if(correcto){
+    if(correcto){
 
-repasos[
-ejercicioActual.id
-].aciertos++;
+        repasos[
+            ejercicioActual.id
+        ].aciertos++;
 
-const nivel=
+        const nivel =
 
-repasos[
-ejercicioActual.id
-].aciertos;
+        repasos[
+            ejercicioActual.id
+        ].aciertos;
 
-repasos[
-ejercicioActual.id
-].proximoRepaso=
+        repasos[
+            ejercicioActual.id
+        ].proximoRepaso =
 
-Date.now()+
-Math.min(30,nivel)*
-24*60*60*1000;
+        Date.now() +
+        Math.min(30, nivel) *
+        24 * 60 * 60 * 1000;
 
-}else{
+    }else{
 
-repasos[
-ejercicioActual.id
-].fallos++;
+        repasos[
+            ejercicioActual.id
+        ].fallos++;
 
-repasos[
-ejercicioActual.id
-].proximoRepaso=
+        repasos[
+            ejercicioActual.id
+        ].proximoRepaso =
 
-Date.now()+
-24*60*60*1000;
+        Date.now() +
+        24 * 60 * 60 * 1000;
 
-}
+    }
 
-guardarRepasos(repasos);
+    guardarRepasos(repasos);
 
 }
 
 function responderTest(respuesta){
 
-const correcta=
-ejercicioActual.espanol;
+    const correcta =
+    ejercicioActual.espanol;
 
-estadisticas.respuestas++;
+    const resultado =
+    document.getElementById(
+        "resultado"
+    );
 
-if(respuesta===correcta){
+    estadisticas.respuestas++;
 
-estadisticas.aciertos++;
+    if(respuesta === correcta){
 
-actualizarRepaso(true);
+        estadisticas.aciertos++;
 
-resultado.className=
-"correcto";
+        actualizarRepaso(true);
 
-resultado.textContent=
-"✅ Correcto";
+        resultado.className =
+        "correcto";
 
-}else{
+        resultado.textContent =
+        "✅ Correcto";
 
-estadisticas.fallos++;
+    }else{
 
-actualizarRepaso(false);
+        estadisticas.fallos++;
 
-resultado.className=
-"incorrecto";
+        actualizarRepaso(false);
 
-resultado.textContent=
-"❌ Correcto: "+
-correcta;
+        resultado.className =
+        "incorrecto";
 
-}
+        resultado.textContent =
+        "❌ Correcto: " +
+        correcta;
 
-guardarEstadisticas();
+    }
 
-actualizarDashboard();
+    guardarEstadisticas();
 
-setTimeout(
-seleccionarPendiente,
-1500
-);
+    actualizarDashboard();
+
+    setTimeout(
+        seleccionarPendiente,
+        1500
+    );
 
 }
 
 function comprobar(){
 
-const texto=
-document
-.getElementById("respuesta")
-.value
-.trim()
-.toLowerCase();
+    const texto =
+    document
+    .getElementById("respuesta")
+    .value
+    .trim()
+    .toLowerCase();
 
-const correcta=
-ejercicioActual.espanol
-.toLowerCase();
+    const correcta =
+    ejercicioActual.espanol
+    .toLowerCase();
 
-estadisticas.respuestas++;
+    const resultado =
+    document.getElementById(
+        "resultado"
+    );
 
-if(texto===correcta){
+    estadisticas.respuestas++;
 
-estadisticas.aciertos++;
+    if(texto === correcta){
 
-actualizarRepaso(true);
+        estadisticas.aciertos++;
 
-resultado.className=
-"correcto";
+        actualizarRepaso(true);
 
-resultado.textContent=
-"✅ Correcto";
+        resultado.className =
+        "correcto";
 
-}else{
+        resultado.textContent =
+        "✅ Correcto";
 
-estadisticas.fallos++;
+    }else{
 
-actualizarRepaso(false);
+        estadisticas.fallos++;
 
-resultado.className=
-"incorrecto";
+        actualizarRepaso(false);
 
-resultado.textContent=
-"❌ Correcto: "+
-ejercicioActual.espanol;
+        resultado.className =
+        "incorrecto";
 
-}
+        resultado.textContent =
+        "❌ Correcto: " +
+        ejercicioActual.espanol;
 
-guardarEstadisticas();
+    }
 
-actualizarDashboard();
+    guardarEstadisticas();
 
-setTimeout(
-seleccionarPendiente,
-1500
-);
+    actualizarDashboard();
 
-}
-
-function actualizarDashboard(){
-
-document.getElementById(
-"totalRespuestas"
-).textContent=
-estadisticas.respuestas;
-
-document.getElementById(
-"aciertos"
-).textContent=
-estadisticas.aciertos;
-
-document.getElementById(
-"fallos"
-).textContent=
-estadisticas.fallos;
-
-const porcentaje=
-estadisticas.respuestas
-?
-Math.round(
-estadisticas.aciertos
-/
-estadisticas.respuestas
-*100
-)
-:0;
-
-document.getElementById(
-"porcentaje"
-).textContent=
-porcentaje;
-
-}
-
-function actualizarRacha(){
-
-const hoy=
-new Date()
-.toISOString()
-.split("T")[0];
-
-let racha=
-Number(
-localStorage.getItem(
-"racha"
-)
-)||0;
-
-const ultimo=
-localStorage.getItem(
-"ultimoEstudio"
-);
-
-if(!ultimo){
-
-racha=1;
-
-}else{
-
-const ayer=
-new Date();
-
-ayer.setDate(
-ayer.getDate()-1
-);
-
-const fechaAyer=
-ayer
-.toISOString()
-.split("T")[0];
-
-if(
-ultimo===fechaAyer
-){
-racha++;
-}
-else if(
-ultimo!==hoy
-){
-racha=1;
-}
-
-}
-
-localStorage.setItem(
-"racha",
-racha
-);
-
-localStorage.setItem(
-"ultimoEstudio",
-hoy
-);
-
-document.getElementById(
-"racha"
-).textContent=
-racha;
-
-}
+    setTimeout(
+        seleccionarPendiente
 
 function escucharFrances(){
 
