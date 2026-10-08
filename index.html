@@ -1,1 +1,128 @@
-HOLA
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Français avec Gus</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+</head>
+
+<body class="dark">
+
+<header>
+<h1>🇫🇷 Français avec Gus</h1>
+<p>Flashcards de francés A1-B2</p>
+</header>
+
+<main>
+
+<div class="stats-top">
+
+<div class="mini-card">
+✅
+<span id="aprendidas">0</span>
+</div>
+
+<div class="mini-card">
+❌
+<span id="dificiles">0</span>
+</div>
+
+<div class="mini-card">
+📚
+<span id="total">0</span>
+</div>
+
+</div>
+
+<div class="filters">
+
+<select id="nivelFilter">
+
+<option value="Todos">Todos</option>
+<option value="A1">A1</option>
+<option value="A2">A2</option>
+<option value="B1">B1</option>
+<option value="B2">B2</option>
+
+</select>
+
+</div>
+
+<div id="contador">
+Tarjeta 0 de 0
+</div>
+
+<progress
+id="barraProgreso"
+value="0"
+max="100">
+</progress>
+
+<div id="info"></div>
+
+<div class="card">
+
+<div id="frances" class="front">
+Cargando...
+</div>
+
+<div id="espanol" class="back"></div>
+
+<button id="mostrarBtn">
+Mostrar respuesta
+</button>
+
+<div class="actions">
+
+<button onclick="anterior()">
+⬅️
+</button>
+
+<button onclick="escuchar()">
+🔊
+</button>
+
+<button onclick="siguiente()">
+➡️
+</button>
+
+</div>
+
+<div class="learn">
+
+<button
+class="bad"
+onclick="marcarDificil()">
+😵 Difícil
+</button>
+
+<button
+class="good"
+onclick="marcarFacil()">
+✅ Fácil
+</button>
+
+</div>
+
+</div>
+
+</main>
+
+<nav>
+
+<button onclick="irInicio()">🏠</button>
+
+<button onclick="mostrarTodas()">📚</button>
+
+<button onclick="mostrarResumen()">📊</button>
+
+<button onclick="reiniciarProgreso()">♻️</button>
+
+</nav>
+
+<script src="app.js"></script>
+
+</body>
+</html>
