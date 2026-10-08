@@ -1,126 +1,226 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Français avec Gus</title>
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Français avec Gus</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 
 <body class="dark">
 
 <header>
-<h1>🇫🇷 Français avec Gus</h1>
-<p>Flashcards de francés A1-B2</p>
+    <h1>🇫🇷 Français avec Gus</h1>
+    <p>Flashcards de francés A1-B2</p>
 </header>
 
 <main>
 
-<div class="stats-top">
+    <!-- ESTADÍSTICAS -->
+    <section class="stats-top">
 
-<div class="mini-card">
-✅
-<span id="aprendidas">0</span>
-</div>
+        <div class="mini-card">
+            <span class="mini-icon">✅</span>
+            <span id="aprendidas">0</span>
+            <small>Aprendidas</small>
+        </div>
 
-<div class="mini-card">
-❌
-<span id="dificiles">0</span>
-</div>
+        <div class="mini-card">
+            <span class="mini-icon">❌</span>
+            <span id="dificiles">0</span>
+            <small>Difíciles</small>
+        </div>
 
-<div class="mini-card">
-📚
-<span id="total">0</span>
-</div>
+        <div class="mini-card">
+            <span class="mini-icon">⭐</span>
+            <span id="favoritas">0</span>
+            <small>Favoritas</small>
+        </div>
 
-</div>
+        <div class="mini-card">
+            <span class="mini-icon">📚</span>
+            <span id="total">0</span>
+            <small>Total</small>
+        </div>
 
-<div class="filters">
+    </section>
 
-<select id="nivelFilter">
 
-<option value="Todos">Todos</option>
-<option value="A1">A1</option>
-<option value="A2">A2</option>
-<option value="B1">B1</option>
-<option value="B2">B2</option>
+    <!-- FILTROS -->
+    <section class="filters">
 
-</select>
+        <div class="filter-group">
+            <label for="nivelFilter">Nivel</label>
 
-</div>
+            <select id="nivelFilter">
+                <option value="Todos">Todos los niveles</option>
+                <option value="A1">A1</option>
+                <option value="A2">A2</option>
+                <option value="B1">B1</option>
+                <option value="B2">B2</option>
+            </select>
+        </div>
 
-<div id="contador">
-Tarjeta 0 de 0
-</div>
 
-<progress
-id="barraProgreso"
-value="0"
-max="100">
-</progress>
+        <div class="filter-group">
+            <label for="modoFiltro">Mostrar</label>
 
-<div id="info"></div>
+            <select id="modoFiltro">
+                <option value="todas">Todas</option>
+                <option value="favoritas">⭐ Favoritas</option>
+                <option value="aprendidas">✅ Aprendidas</option>
+                <option value="dificiles">❌ Difíciles</option>
+                <option value="pendientes">⏳ Pendientes</option>
+            </select>
+        </div>
 
-<div class="card">
+    </section>
 
-<div id="frances" class="front">
-Cargando...
-</div>
 
-<div id="espanol" class="back"></div>
+    <!-- CONTADOR -->
+    <div id="contador">
+        Tarjeta 0 de 0
+    </div>
 
-<button id="mostrarBtn">
-Mostrar respuesta
-</button>
 
-<div class="actions">
+    <!-- PROGRESO -->
+    <progress
+        id="barraProgreso"
+        value="0"
+        max="100">
+    </progress>
 
-<button onclick="anterior()">
-⬅️
-</button>
 
-<button onclick="escuchar()">
-🔊
-</button>
+    <!-- INFORMACIÓN DE LA TARJETA -->
+    <div id="info">
+        Cargando...
+    </div>
 
-<button onclick="siguiente()">
-➡️
-</button>
 
-</div>
+    <!-- TARJETA -->
+    <section class="card">
 
-<div class="learn">
+        <div id="frances" class="front">
+            Cargando...
+        </div>
 
-<button
-class="bad"
-onclick="marcarDificil()">
-😵 Difícil
-</button>
+        <div id="espanol" class="back"></div>
 
-<button
-class="good"
-onclick="marcarFacil()">
-✅ Fácil
-</button>
 
-</div>
+        <!-- BOTONES PRINCIPALES -->
+        <div class="main-actions">
 
-</div>
+            <button
+                id="mostrarBtn"
+                type="button">
+                👁️ Mostrar respuesta
+            </button>
+
+            <button
+                id="favoritaBtn"
+                type="button"
+                class="favorite-btn">
+                ☆ Favorita
+            </button>
+
+        </div>
+
+
+        <!-- NAVEGACIÓN -->
+        <div class="actions">
+
+            <button
+                id="anteriorBtn"
+                type="button"
+                aria-label="Tarjeta anterior">
+                ⬅️
+            </button>
+
+            <button
+                id="escucharBtn"
+                type="button"
+                aria-label="Escuchar pronunciación">
+                🔊
+            </button>
+
+            <button
+                id="siguienteBtn"
+                type="button"
+                aria-label="Tarjeta siguiente">
+                ➡️
+            </button>
+
+        </div>
+
+
+        <!-- APRENDIZAJE -->
+        <div class="learn">
+
+            <button
+                id="dificilBtn"
+                type="button"
+                class="bad">
+                😵 Difícil
+            </button>
+
+            <button
+                id="facilBtn"
+                type="button"
+                class="good">
+                ✅ Fácil
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- MENSAJES -->
+    <div
+        id="mensaje"
+        class="mensaje"
+        aria-live="polite">
+    </div>
 
 </main>
 
-<nav>
 
-<button onclick="irInicio()">🏠</button>
+<!-- NAVEGACIÓN INFERIOR -->
+<nav class="bottom-nav">
 
-<button onclick="mostrarTodas()">📚</button>
+    <button
+        id="inicioBtn"
+        type="button">
+        🏠
+        <span>Inicio</span>
+    </button>
 
-<button onclick="mostrarResumen()">📊</button>
+    <button
+        id="todasBtn"
+        type="button">
+        📚
+        <span>Todas</span>
+    </button>
 
-<button onclick="reiniciarProgreso()">♻️</button>
+    <button
+        id="resumenBtn"
+        type="button">
+        📊
+        <span>Resumen</span>
+    </button>
+
+    <button
+        id="reiniciarBtn"
+        type="button">
+        ♻️
+        <span>Reiniciar</span>
+    </button>
 
 </nav>
+
 
 <script src="app.js"></script>
 
