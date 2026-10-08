@@ -10,6 +10,7 @@ const FILES_TO_CACHE = [
     "./francais_flashcards_A1_B2_v1.json",
     "./icon-192.png",
     "./icon-512.png"
+
 ];
 
 self.addEventListener("install", event => {
@@ -18,9 +19,11 @@ self.addEventListener("install", event => {
 
         caches.open(CACHE_NAME)
         .then(cache => cache.addAll(FILES_TO_CACHE))
+
     );
 
     self.skipWaiting();
+
 });
 
 self.addEventListener("activate", event => {
@@ -37,13 +40,19 @@ self.addEventListener("activate", event => {
                     if(key !== CACHE_NAME){
 
                         return caches.delete(key);
+
                     }
+
                 })
+
             );
+
         })
+
     );
 
     self.clients.claim();
+
 });
 
 self.addEventListener("fetch", event => {
@@ -54,6 +63,9 @@ self.addEventListener("fetch", event => {
         .then(response => {
 
             return response || fetch(event.request);
+
         })
+
     );
+
 });
