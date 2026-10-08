@@ -1,695 +1,830 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Français Coach</title>
+/* =========================
+   RESET
+========================= */
 
-<style>
-body{
-    font-family:Arial,sans-serif;
-    background:#121212;
-    color:#fff;
+*{
     margin:0;
-    padding:20px;
-    max-width:800px;
-    margin:auto;
-}
-
-h1,h2{
-    text-align:center;
-}
-
-.card{
-    background:#1e1e1e;
-    border-radius:12px;
-    padding:15px;
-    margin-bottom:15px;
-}
-
-button{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:12px;
-    border-radius:8px;
-    cursor:pointer;
-    margin:5px;
-}
-
-button:hover{
-    background:#1d4ed8;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    border-radius:8px;
-    border:none;
-    margin-top:10px;
+    padding:0;
     box-sizing:border-box;
 }
 
-.frase{
-    font-size:1.5rem;
+/* =========================
+   TEMAS
+========================= */
+
+:root{
+
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --header:#ffffff;
+
+    --text:#111827;
+    --secondary:#6b7280;
+
+    --border:#e5e7eb;
+
+    --primary:#0d6efd;
+    --primary-hover:#0b5ed7;
+
+    --success:#198754;
+    --danger:#dc3545;
+
+    --shadow:
+    0 8px 25px rgba(0,0,0,.08);
+}
+
+body.dark{
+
+    --bg:#121212;
+    --card:#1e1e1e;
+    --header:#1e1e1e;
+
+    --text:#ffffff;
+    --secondary:#999999;
+
+    --border:#333333;
+
+    --primary:#0d6efd;
+    --primary-hover:#3b82f6;
+
+    --success:#22c55e;
+    --danger:#ef4444;
+
+    --shadow:
+    0 8px 25px rgba(0,0,0,.35);
+}
+
+/* =========================
+   BODY
+========================= */
+
+body{
+
+    font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+    background:var(--bg);
+    color:var(--text);
+
+    max-width:500px;
+    margin:auto;
+
+    min-height:100vh;
+
+    transition:.3s;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+
+    background:var(--header);
+
     text-align:center;
+
+    padding:20px;
+
+    border-bottom:
+    1px solid var(--border);
+
+    position:sticky;
+
+    top:0;
+
+    z-index:100;
+
+    backdrop-filter:blur(10px);
+}
+
+header h1{
+
+    font-size:28px;
+
+    margin-bottom:5px;
+}
+
+header p{
+
+    color:var(--secondary);
+
+    font-size:14px;
+}
+
+/* =========================
+   BOTÓN TEMA
+========================= */
+
+#temaBtn{
+
+    position:absolute;
+
+    right:15px;
+
+    top:15px;
+
+    width:45px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:var(--primary);
+
+    color:white;
+
+    cursor:pointer;
+}
+
+/* =========================
+   PROGRESO SUPERIOR
+========================= */
+
+.stats-top{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:10px;
+
+    margin-bottom:20px;
+}
+
+.mini-card{
+
+    background:var(--card);
+
+    border-radius:16px;
+
+    padding:14px;
+
+    text-align:center;
+
+    box-shadow:var(--shadow);
+
+    font-size:18px;
+
+    font-weight:bold;
+}
+
+.mini-card span{
+
+    display:block;
+
+    margin-top:4px;
+
+    font-size:20px;
+}
+
+/* =========================
+   CONTADOR
+========================= */
+
+#contador{
+
+    text-align:center;
+
+    margin-top:10px;
+
+    margin-bottom:10px;
+
+    color:var(--secondary);
+
+    font-size:14px;
+}
+
+/* =========================
+   BARRA PROGRESO
+========================= */
+
+#barraProgreso{
+
+    width:100%;
+
+    height:10px;
+
+    margin-bottom:10px;
+}
+
+progress::-webkit-progress-bar{
+
+    background:#2a2a2a;
+
+    border-radius:10px;
+}
+
+progress::-webkit-progress-value{
+
+    background:var(--primary);
+
+    border-radius:10px;
+}
+
+progress::-moz-progress-bar{
+
+    background:var(--primary);
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+
+    padding:20px;
+
+    padding-bottom:90px;
+}
+
+/* =========================
+   SELECTORES
+========================= */
+
+.filters{
+
+    margin-bottom:20px;
+}
+
+select{
+
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:var(--card);
+
+    color:var(--text);
+
+    font-size:16px;
+
+    box-shadow:var(--shadow);
+}
+
+input{
+
+    width:100%;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    border:1px solid var(--border);
+
+    background:var(--card);
+
+    color:var(--text);
+
+    font-size:16px;
+}
+
+/* =========================
+   ESTADÍSTICAS
+========================= */
+
+.stats{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-bottom:20px;
+}
+
+.stat-box{
+
+    flex:1;
+
+    background:var(--card);
+
+    border-radius:16px;
+
+    padding:15px;
+
+    text-align:center;
+
+    box-shadow:var(--shadow);
+}
+
+.stat-box span{
+
+    display:block;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    color:var(--primary);
+}
+
+.stat-box small{
+
+    color:var(--secondary);
+
+    font-size:12px;
+}
+
+/* =========================
+   TARJETAS
+========================= */
+
+.card{
+
+    background:var(--card);
+
+    border-radius:24px;
+
+    padding:25px;
+
+    min-height:420px;
+
+    box-shadow:var(--shadow);
+
+    transition:.3s;
+}
+
+.card h2{
+
+    text-align:center;
+
+    margin-bottom:15px;
+}
+
+/* =========================
+   PREGUNTA
+========================= */
+
+.front{
+
+    font-size:42px;
+
+    font-weight:700;
+
+    text-align:center;
+
+    margin-top:40px;
+
+    margin-bottom:50px;
+
+    color:var(--primary);
+
+    word-break:break-word;
+}
+
+.back{
+
+    font-size:30px;
+
+    font-weight:600;
+
+    text-align:center;
+
+    color:#4ade80;
+
+    min-height:60px;
+
+    margin-bottom:25px;
+
+    word-break:break-word;
+}
+
+.frase{
+
+    background:rgba(13,110,253,.12);
+
+    border-radius:20px;
+
+    padding:25px;
+
+    font-size:2rem;
+
+    text-align:center;
+
+    font-weight:bold;
+
     margin:20px 0;
 }
 
-.correcto{
-    color:#22c55e;
+/* =========================
+   INFORMACIÓN
+========================= */
+
+#info{
+
+    text-align:center;
+
+    color:var(--secondary);
+
+    font-size:14px;
+
+    margin-bottom:20px;
+}
+
+/* =========================
+   BOTONES
+========================= */
+
+button{
+
+    transition:.2s;
+
+    cursor:pointer;
+}
+
+button:hover{
+
+    transform:translateY(-2px);
+}
+
+#mostrarBtn{
+
+    width:100%;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:14px;
+
+    font-size:18px;
+
     font-weight:bold;
+
+    background:var(--primary);
+
+    color:white;
+
+    margin-bottom:20px;
+}
+
+#mostrarBtn:hover{
+
+    background:var(--primary-hover);
+}
+
+/* =========================
+   BOTONES ACCIÓN
+========================= */
+
+.actions{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-bottom:20px;
+}
+
+.actions button{
+
+    flex:1;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-size:22px;
+
+    background:#2d2d2d;
+
+    color:white;
+}
+
+/* =========================
+   BOTONES APRENDIZAJE
+========================= */
+
+.learn{
+
+    display:flex;
+
+    gap:10px;
+}
+
+.learn button{
+
+    flex:1;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-weight:bold;
+
+    font-size:16px;
+}
+
+.bad{
+
+    background:var(--danger);
+
+    color:white;
+}
+
+.good{
+
+    background:var(--success);
+
+    color:white;
+}
+
+/* =========================
+   RESULTADOS
+========================= */
+
+.correcto{
+
+    color:var(--success);
+
+    font-weight:bold;
+
+    text-align:center;
+
+    animation:zoom .3s;
 }
 
 .incorrecto{
-    color:#ef4444;
+
+    color:var(--danger);
+
     font-weight:bold;
-}
 
-.racha{
     text-align:center;
-    color:#facc15;
-    font-size:1.2rem;
+
+    animation:zoom .3s;
 }
 
-#zonaTest button{
+@keyframes zoom{
+
+    from{
+        transform:scale(.8);
+    }
+
+    to{
+        transform:scale(1);
+    }
+
+}
+
+/* =========================
+   XP
+========================= */
+
+.xp-container{
+
     width:100%;
-    display:block;
+
+    height:20px;
+
+    background:#2d2d2d;
+
+    border-radius:999px;
+
+    overflow:hidden;
+}
+
+#barraXP{
+
+    width:0%;
+
+    height:100%;
+
+    background:
+    linear-gradient(
+        90deg,
+        #22c55e,
+        #4ade80
+    );
+
+    transition:.5s;
+}
+
+/* =========================
+   LOGROS
+========================= */
+
+.logro{
+
+    background:rgba(255,215,0,.15);
+
+    border-left:4px solid gold;
+
+    padding:10px;
+
+    border-radius:10px;
+
     margin-bottom:10px;
 }
-</style>
-</head>
 
-<nav>
+/* =========================
+   NAV INFERIOR
+========================= */
 
-    <button onclick="mostrarPantalla('aprender')">
-        📚
-    </button>
+nav{
 
-    <button onclick="mostrarPantalla('flashcards')">
-        🃏
-    </button>
+    position:fixed;
 
-</nav>
-    
-<body>
+    bottom:0;
 
-<div id="pantallaAprender">   
-    
-<h1>🇫🇷 Français Coach</h1>
+    left:0;
 
-<div class="card">
-    <div class="racha">
-        🔥 Racha:
-        <span id="racha">0</span>
-        días
-    </div>
-</div>
+    right:0;
 
-<div class="card">
-    <h2>Modo de aprendizaje</h2>
+    max-width:500px;
 
-    <button onclick="cambiarModo('test')">
-        ✅ Test
-    </button>
+    margin:auto;
 
-    <button onclick="cambiarModo('escritura')">
-        ✍️ Escritura
-    </button>
-</div>
+    background:var(--header);
 
-<div class="card">
+    border-top:
+    1px solid var(--border);
 
-    <h2>Ejercicio</h2>
+    display:flex;
 
-    <div id="pregunta" class="frase"></div>
+    justify-content:space-around;
 
-    <button onclick="escucharFrances()">
-        🔊 Escuchar
-    </button>
-
-    <div id="zonaTest"></div>
-
-    <div id="zonaEscritura">
-
-        <input
-            type="text"
-            id="respuesta"
-            placeholder="Escribe la traducción">
-
-        <button onclick="comprobar()">
-            Comprobar
-        </button>
-
-    </div>
-
-    <p id="resultado"></p>
-
-</div>
-
-<div class="card">
-<h2>📊 Estadísticas</h2>
-
-<p>Total respuestas:
-<span id="totalRespuestas">0</span></p>
-
-<p>Aciertos:
-<span id="aciertos">0</span></p>
-
-<p>Fallos:
-<span id="fallos">0</span></p>
-
-<p>% Éxito:
-<span id="porcentaje">0</span>%</p>
-
-</div>
-
-<div class="card">
-
-<h2>🏆 Progreso</h2>
-
-<p>
-Nivel:
-<span id="nivel">1</span>
-</p>
-
-<p>
-XP:
-<span id="xp">0</span> /
-<span id="xpMax">100</span>
-</p>
-
-<div style="
-width:100%;
-height:20px;
-background:#333;
-border-radius:10px;
-overflow:hidden;">
-
-<div id="barraXP"
-style="
-height:100%;
-width:0%;
-background:#22c55e;">
-</div>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<h2>🎖️ Logros</h2>
-
-<div id="logros">
-<p>Aún no hay logros.</p>
-</div>
-
-</div>
-
-<script>
-
-let modo="test";
-
-const frases=[
-
-{
-id:1,
-frances:"Bonjour",
-espanol:"hola"
-},
-
-{
-id:2,
-frances:"Merci beaucoup",
-espanol:"muchas gracias"
-},
-
-{
-id:3,
-frances:"Je vais au travail",
-espanol:"voy al trabajo"
-},
-
-{
-id:4,
-frances:"Je suis fatigué",
-espanol:"estoy cansado"
-},
-
-{
-id:5,
-frances:"Où est la gare ?",
-espanol:"dónde está la estación"
-},
-
-{
-id:6,
-frances:"Je voudrais un café",
-espanol:"quisiera un café"
-},
-
-{
-id:7,
-frances:"Comment allez-vous ?",
-espanol:"cómo está usted"
-},
-
-{
-id:8,
-frances:"J'aime apprendre le français",
-espanol:"me gusta aprender francés"
-},
-
-{
-id:9,
-frances:"Il fait beau aujourd'hui",
-espanol:"hace buen tiempo hoy"
-},
-
-{
-id:10,
-frances:"Je parle un peu français",
-espanol:"hablo un poco de francés"
+    padding:12px;
 }
 
-];
+nav button{
 
-let ejercicioActual = null;
-let flashcardActual = null;
+    background:none;
 
-const estadisticas =
-JSON.parse(
-    localStorage.getItem("estadisticas")
-)
-||
-{
-    respuestas: 0,
-    aciertos: 0,
-    fallos: 0
-};
+    border:none;
 
-function guardarEstadisticas(){
+    color:var(--text);
 
-    localStorage.setItem(
-        "estadisticas",
-        JSON.stringify(estadisticas)
-    );
-
+    font-size:24px;
 }
 
-function obtenerRepasos(){
+/* =========================
+   RESPONSIVE
+========================= */
 
-    let datos =
-    JSON.parse(
-        localStorage.getItem("repasos")
-    );
+@media(max-width:768px){
 
-    if(!datos){
+    main{
 
-        datos = {};
-
-        frases.forEach(f => {
-
-            datos[f.id] = {
-                aciertos: 0,
-                fallos: 0,
-                proximoRepaso: 0
-            };
-
-        });
-
-        
-function actualizarRepaso(correcto){
-
-    const repasos =
-    obtenerRepasos();
-
-    if(correcto){
-
-        repasos[
-            ejercicioActual.id
-        ].aciertos++;
-
-        const nivel =
-
-        repasos[
-            ejercicioActual.id
-        ].aciertos;
-
-        repasos[
-            ejercicioActual.id
-        ].proximoRepaso =
-
-        Date.now() +
-        Math.min(30, nivel) *
-        24 * 60 * 60 * 1000;
-
-    }else{
-
-        repasos[
-            ejercicioActual.id
-        ].fallos++;
-
-        repasos[
-            ejercicioActual.id
-        ].proximoRepaso =
-
-        Date.now() +
-        24 * 60 * 60 * 1000;
-
+        padding:15px;
+        padding-bottom:90px;
     }
 
-    guardarRepasos(repasos);
+    .frase{
 
-}
-
-function responderTest(respuesta){
-
-    const correcta =
-    ejercicioActual.espanol;
-
-    const resultado =
-    document.getElementById(
-        "resultado"
-    );
-
-    estadisticas.respuestas++;
-
-    if(respuesta === correcta){
-
-        estadisticas.aciertos++;
-
-        actualizarRepaso(true);
-
-        resultado.className =
-        "correcto";
-
-        resultado.textContent =
-        "✅ Correcto";
-
-    }else{
-
-        estadisticas.fallos++;
-
-        actualizarRepaso(false);
-
-        resultado.className =
-        "incorrecto";
-
-        resultado.textContent =
-        "❌ Correcto: " +
-        correcta;
-
+        font-size:1.6rem;
     }
 
-    guardarEstadisticas();
+    button{
 
-    actualizarDashboard();
-
-    setTimeout(
-        seleccionarPendiente,
-        1500
-    );
-
-}
-
-function comprobar(){
-
-    const texto =
-    document
-    .getElementById("respuesta")
-    .value
-    .trim()
-    .toLowerCase();
-
-    const correcta =
-    ejercicioActual.espanol
-    .toLowerCase();
-
-    const resultado =
-    document.getElementById(
-        "resultado"
-    );
-
-    estadisticas.respuestas++;
-
-    if(texto === correcta){
-
-        estadisticas.aciertos++;
-
-        actualizarRepaso(true);
-
-        resultado.className =
-        "correcto";
-
-        resultado.textContent =
-        "✅ Correcto";
-
-    }else{
-
-        estadisticas.fallos++;
-
-        actualizarRepaso(false);
-
-        resultado.className =
-        "incorrecto";
-
-        resultado.textContent =
-        "❌ Correcto: " +
-        ejercicioActual.espanol;
-
-    }
-
-    guardarEstadisticas();
-
-    actualizarDashboard();
-
-    setTimeout(
-        seleccionarPendiente
-
-function escucharFrances(){
-
-    if(!ejercicioActual){
-        return;
-    }
-
-    const voz =
-        new SpeechSynthesisUtterance(
-            ejercicioActual.frances
-        );
-
-    voz.lang = "fr-FR";
-
-    speechSynthesis.cancel();
-    speechSynthesis.speak(voz);
-
-}
-
-function mostrarPantalla(tipo){
-
-    document.getElementById(
-        "pantallaAprender"
-    ).style.display =
-        tipo === "aprender"
-        ? "block"
-        : "none";
-
-    document.getElementById(
-        "pantallaFlashcards"
-    ).style.display =
-        tipo === "flashcards"
-        ? "block"
-        : "none";
-
-    if(tipo === "flashcards"){
-        cargarFlashcard();
+        width:100%;
     }
 
 }
 
-function cargarFlashcard(){
+@media(max-width:480px){
 
-    const repasos =
-        obtenerRepasos();
+    body{
 
-    const ahora =
-        Date.now();
-
-    let pendientes =
-        frases.filter(
-            f => repasos[f.id].proximoRepaso <= ahora
-        );
-
-    if(pendientes.length === 0){
-        pendientes = frases;
+        max-width:100%;
     }
 
-    flashcardActual =
-        pendientes[
-            Math.floor(
-                Math.random() *
-                pendientes.length
-            )
-        ];
+    header h1{
 
-    document.getElementById(
-        "flashFrances"
-    ).textContent =
-        flashcardActual.frances;
-
-    document.getElementById(
-        "flashEspanol"
-    ).textContent =
-        "???";
-
-}
-
-function mostrarRespuestaFlash(){
-
-    if(!flashcardActual){
-        return;
+        font-size:24px;
     }
 
-    document.getElementById(
-        "flashEspanol"
-    ).textContent =
-        flashcardActual.espanol;
+    .front{
 
-}
-
-function siguienteFlashcard(){
-
-    cargarFlashcard();
-
-}
-
-function escucharFlashcard(){
-
-    if(!flashcardActual){
-        return;
+        font-size:30px;
     }
 
-    const voz =
-        new SpeechSynthesisUtterance(
-            flashcardActual.frances
-        );
+    .back{
 
-    voz.lang = "fr-FR";
+        font-size:24px;
+    }
 
-    speechSynthesis.cancel();
-    speechSynthesis.speak(
-        voz
-    );
+    .frase{
+
+        font-size:1.3rem;
+
+        padding:20px;
+    }
+
+    .card{
+
+        min-height:380px;
+    }
+
+    .mini-card{
+
+        font-size:16px;
+    }
+
+    .mini-card span{
+
+        font-size:18px;
+    }
+
+    .stat-box span{
+
+        font-size:20px;
+    }
+}
+
+/* =========================
+   FLASHCARDS
+========================= */
+
+#pantallaFlashcards{
+
+    animation:fadeIn .3s ease;
 
 }
 
-function marcarFlashcard(correcto){
+#flashInfo{
 
-    const repasos =
-        obtenerRepasos();
+    text-align:center;
 
-    if(correcto){
+    color:var(--secondary);
 
-        repasos[
-            flashcardActual.id
-        ].aciertos++;
+    margin-bottom:15px;
 
-        const aciertos =
-            repasos[
-                flashcardActual.id
-            ].aciertos;
+    font-size:14px;
 
-        repasos[
-            flashcardActual.id
-        ].proximoRepaso =
-            Date.now() +
-            Math.min(30, aciertos) *
-            24 * 60 * 60 * 1000;
+}
 
-    }else{
+#flashFrances{
 
-        repasos[
-            flashcardActual.id
-        ].fallos++;
+    min-height:120px;
 
-        repasos[
-            flashcardActual.id
-        ].proximoRepaso =
-            Date.now() +
-            24 * 60 * 60 * 1000;
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:2rem;
+
+    font-weight:bold;
+
+    text-align:center;
+
+}
+
+#flashEspanol{
+
+    min-height:70px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:1.5rem;
+
+    text-align:center;
+
+    color:#22c55e;
+
+    margin-bottom:20px;
+
+}
+
+.flashcard-reveal{
+
+    animation:fadeIn .3s ease;
+
+}
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+        transform:translateY(10px);
 
     }
 
-    guardarRepasos(repasos);
+    to{
 
-    setTimeout(
-        cargarFlashcard,
-        300
-    );
+        opacity:1;
+        transform:translateY(0);
+
+    }
 
 }
-
-actualizarDashboard();
-actualizarRacha();
-seleccionarPendiente();
-
-</div>
-
-<div id="pantallaFlashcards" style="display:none;">
-
-    <div class="card">
-
-        <h2>🃏 Flashcards</h2>
-
-        <div id="flashInfo">
-            Tarjeta de vocabulario
-        </div>
-
-        <div class="front" id="flashFrances">
-            Bonjour
-        </div>
-
-        <div class="back" id="flashEspanol">
-            ???
-        </div>
-
-        <button id="mostrarBtn"
-                onclick="mostrarRespuestaFlash()">
-            Mostrar respuesta
-        </button>
-
-        <div class="actions">
-
-            <button onclick="escucharFlashcard()">
-                🔊
-            </button>
-
-            <button onclick="siguienteFlashcard()">
-                ➡️
-            </button>
-
-        </div>
-
-        <div class="learn">
-
-            <button class="bad"
-                    onclick="marcarFlashcard(false)">
-                😵 Difícil
-            </button>
-
-            <button class="good"
-                    onclick="marcarFlashcard(true)">
-                ✅ Fácil
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-    
-</script>
-
-</body>
-</html>
