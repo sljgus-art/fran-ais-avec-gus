@@ -401,8 +401,8 @@ const ahora=
 Date.now();
 
 let pendientes=
-frases.filter(f=>
-repasos[f.id].proximoRepaso<=ahora
+frases.filter(
+    f => repasos[f.id].proximoRepaso <= ahora
 );
 
 if(
@@ -737,21 +737,38 @@ racha;
 }
 
 function escucharFrances(){
+
+    if(!ejercicioActual){
+        return;
+    }
+
+    const voz =
+        new SpeechSynthesisUtterance(
+            ejercicioActual.frances
+        );
+
+    voz.lang = "fr-FR";
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(voz);
+
+}
+
 function mostrarPantalla(tipo){
 
     document.getElementById(
         "pantallaAprender"
     ).style.display =
-    tipo === "aprender"
-    ? "block"
-    : "none";
+        tipo === "aprender"
+        ? "block"
+        : "none";
 
     document.getElementById(
         "pantallaFlashcards"
     ).style.display =
-    tipo === "flashcards"
-    ? "block"
-    : "none";
+        tipo === "flashcards"
+        ? "block"
+        : "none";
 
     if(tipo === "flashcards"){
         cargarFlashcard();
@@ -762,48 +779,50 @@ function mostrarPantalla(tipo){
 function cargarFlashcard(){
 
     const repasos =
-    obtenerRepasos();
+        obtenerRepasos();
 
     const ahora =
-    Date.now();
+        Date.now();
 
     let pendientes =
-    frases.filter(f =>
-        repasos[f.id].proximoRepaso <= ahora
-    );
+        frases.filter(
+            f => repasos[f.id].proximoRepaso <= ahora
+        );
 
-    if(pendientes.length===0){
-
+    if(pendientes.length === 0){
         pendientes = frases;
-
     }
 
     flashcardActual =
-    pendientes[
-        Math.floor(
-            Math.random()*
-            pendientes.length
-        )
-    ];
+        pendientes[
+            Math.floor(
+                Math.random() *
+                pendientes.length
+            )
+        ];
 
     document.getElementById(
         "flashFrances"
     ).textContent =
-    flashcardActual.frances;
+        flashcardActual.frances;
 
     document.getElementById(
         "flashEspanol"
     ).textContent =
-    "???";
+        "???";
 
-}    
+}
 
 function mostrarRespuestaFlash(){
 
+    if(!flashcardActual){
+        return;
+    }
+
     document.getElementById(
         "flashEspanol"
     ).textContent =
-    flashcardActual.espanol;
+        flashcardActual.espanol;
 
 }
 
@@ -815,25 +834,28 @@ function siguienteFlashcard(){
 
 function escucharFlashcard(){
 
-    if(!flashcardActual) return;
+    if(!flashcardActual){
+        return;
+    }
 
     const voz =
-    new SpeechSynthesisUtterance(
-        flashcardActual.frances
-    );
+        new SpeechSynthesisUtterance(
+            flashcardActual.frances
+        );
 
-    voz.lang="fr-FR";
+    voz.lang = "fr-FR";
 
+    speechSynthesis.cancel();
     speechSynthesis.speak(
         voz
     );
 
-}    
+}
 
 function marcarFlashcard(correcto){
 
     const repasos =
-    obtenerRepasos();
+        obtenerRepasos();
 
     if(correcto){
 
@@ -842,16 +864,16 @@ function marcarFlashcard(correcto){
         ].aciertos++;
 
         const aciertos =
-        repasos[
-            flashcardActual.id
-        ].aciertos;
+            repasos[
+                flashcardActual.id
+            ].aciertos;
 
         repasos[
             flashcardActual.id
         ].proximoRepaso =
-        Date.now() +
-        Math.min(30,aciertos) *
-        24*60*60*1000;
+            Date.now() +
+            Math.min(30, aciertos) *
+            24 * 60 * 60 * 1000;
 
     }else{
 
@@ -862,8 +884,8 @@ function marcarFlashcard(correcto){
         repasos[
             flashcardActual.id
         ].proximoRepaso =
-        Date.now() +
-        24*60*60*1000;
+            Date.now() +
+            24 * 60 * 60 * 1000;
 
     }
 
@@ -873,22 +895,6 @@ function marcarFlashcard(correcto){
         cargarFlashcard,
         300
     );
-
-}    
-    
-if(!ejercicioActual)
-return;
-
-const voz=
-new SpeechSynthesisUtterance(
-ejercicioActual.frances
-);
-
-voz.lang="fr-FR";
-
-speechSynthesis.speak(
-voz
-);
 
 }
 
