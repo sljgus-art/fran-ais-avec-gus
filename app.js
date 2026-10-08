@@ -114,6 +114,9 @@ async function iniciar() {
 
         actualizarTodo();
 
+        indice = 0;
+        aplicarFiltros();
+
         mostrarVista("inicioView");
 
     } catch (error) {
