@@ -671,68 +671,68 @@ porcentaje;
 
 function actualizarRacha(){
 
-const hoy=
-new Date()
-.toISOString()
-.split("T")[0];
+    const hoy =
+        new Date()
+        .toISOString()
+        .split("T")[0];
 
-let racha=
-Number(
-localStorage.getItem(
-"racha"
-)
-)||0;
+    let racha =
+        Number(
+            localStorage.getItem(
+                "racha"
+            )
+        ) || 0;
 
-const ultimo=
-localStorage.getItem(
-"ultimoEstudio"
-);
+    const ultimo =
+        localStorage.getItem(
+            "ultimoEstudio"
+        );
 
-if(!ultimo){
+    if(!ultimo){
 
-racha=1;
+        racha = 1;
 
-}else{
+    }else{
 
-const ayer=
-new Date();
+        const ayer =
+            new Date();
 
-ayer.setDate(
-ayer.getDate()-1
-);
+        ayer.setDate(
+            ayer.getDate() - 1
+        );
 
-const fechaAyer=
-ayer
-.toISOString()
-.split("T")[0];
+        const fechaAyer =
+            ayer
+            .toISOString()
+            .split("T")[0];
 
-if(
-ultimo===fechaAyer
-){
-racha++;
-}
-else if(
-ultimo!==hoy
-){
-racha=1;
-}
+        if(
+            ultimo === fechaAyer
+        ){
+            racha++;
+        }
+        else if(
+            ultimo !== hoy
+        ){
+            racha = 1;
+        }
 
-}
+    }
 
-localStorage.setItem(
-"racha",
-racha
-);
+    localStorage.setItem(
+        "racha",
+        racha
+    );
 
-localStorage.setItem(
-"ultimoEstudio",
-hoy
-);
+    localStorage.setItem(
+        "ultimoEstudio",
+        hoy
+    );
 
-document.getElementById(
-"racha"
-).textContent=
-racha;
+    document.getElementById(
+        "racha"
+    ).textContent =
+        racha;
 
 }
 
@@ -846,9 +846,7 @@ function escucharFlashcard(){
     voz.lang = "fr-FR";
 
     speechSynthesis.cancel();
-    speechSynthesis.speak(
-        voz
-    );
+    speechSynthesis.speak(voz);
 
 }
 
@@ -901,6 +899,8 @@ function marcarFlashcard(correcto){
 actualizarDashboard();
 actualizarRacha();
 seleccionarPendiente();
+
+</script>
 
 </div>
 
@@ -956,8 +956,6 @@ seleccionarPendiente();
     </div>
 
 </div>
-    
-</script>
 
 </body>
 </html>
