@@ -1,431 +1,209 @@
 "use strict";
 
-/*
-    ==========================================
-    FRANÇAIS AVEC GUS
-    Flashcards A1-B2
-    ==========================================
-*/
+/* =====================================================
+   FRANÇAIS AVEC GUS
+   Plataforma de aprendizaje A1-B2
+===================================================== */
+
+
+/* =====================================================
+   ESTADO GENERAL
+===================================================== */
 
 let tarjetas = [];
 let tarjetasFiltradas = [];
 let indice = 0;
 
+let nivelUsuario = localStorage.getItem("gusNivel") || "A1";
 
-/* ==========================================
-   ELEMENTOS DEL DOM
-   ========================================== */
+let progreso =
+    JSON.parse(localStorage.getItem("gusProgreso") || "{}");
 
-const nivelFilter = document.getElementById("nivelFilter");
-const modoFiltro = document.getElementById("modoFiltro");
+let favoritas =
+    JSON.parse(localStorage.getItem("gusFavoritas") || "[]");
 
-const contador = document.getElementById("contador");
-const barraProgreso = document.getElementById("barraProgreso");
-
-const info = document.getElementById("info");
-const frances = document.getElementById("frances");
-const espanol = document.getElementById("espanol");
-
-const mostrarBtn = document.getElementById("mostrarBtn");
-const favoritaBtn = document.getElementById("favoritaBtn");
-
-const anteriorBtn = document.getElementById("anteriorBtn");
-const escucharBtn = document.getElementById("escucharBtn");
-const siguienteBtn = document.getElementById("siguienteBtn");
-
-const dificilBtn = document.getElementById("dificilBtn");
-const facilBtn = document.getElementById("facilBtn");
-
-const inicioBtn = document.getElementById("inicioBtn");
-const todasBtn = document.getElementById("todasBtn");
-const resumenBtn = document.getElementById("resumenBtn");
-const reiniciarBtn = document.getElementById("reiniciarBtn");
-
-const mensaje = document.getElementById("mensaje");
+let historialExamenes =
+    JSON.parse(localStorage.getItem("gusExamenes") || "[]");
 
 
-/* ==========================================
+/* =====================================================
+   ESTADO FLASHCARDS
+===================================================== */
+
+let flashcardModoRepaso = false;
+
+
+/* =====================================================
+   ESTADO PRÁCTICA
+===================================================== */
+
+let practicaTipo = "";
+let practicaTarjetas = [];
+let practicaIndice = 0;
+let practicaPuntos = 0;
+let practicaRespondida = false;
+
+
+/* =====================================================
+   ESTADO ESCRITURA
+===================================================== */
+
+let escrituraTarjetas = [];
+let escrituraIndice = 0;
+let escrituraAciertos = 0;
+let escrituraRespondida = false;
+
+
+/* =====================================================
+   ESTADO EXAMEN
+===================================================== */
+
+let examenTarjetas = [];
+let examenIndice = 0;
+let examenCorrectas = 0;
+let examenFalladas = 0;
+let examenRespondida = false;
+
+
+/* =====================================================
+   DOM
+===================================================== */
+
+const $ = (id) => document.getElementById(id);
+
+
+/* =====================================================
    INICIO
-   ========================================== */
+===================================================== */
 
 document.addEventListener("DOMContentLoaded", iniciar);
 
 
 async function iniciar() {
 
+    configurarNavegacion();
     configurarEventos();
 
+    actualizarNivelUI();
+
     try {
 
-        const respuesta = await fetch(
-            "francais_flashcards_A1_B2_v1.json"
-        );
+        const response =
+            await fetch("francais_flashcards_A1_B2_v1.json");
 
-        if (!respuesta.ok) {
-
+        if (!response.ok) {
             throw new Error(
-                `Error HTTP ${respuesta.status}`
+                `No se pudo cargar el JSON (${response.status})`
             );
         }
 
-        const data = await respuesta.json();
+        tarjetas = await response.json();
 
-        if (!Array.isArray(data)) {
+        if (!Array.isArray(tarjetas) || tarjetas.length === 0) {
+            throw new Error("El archivo JSON no contiene tarjetas.");
+        }
 
-            throw new Error(
-                "El JSON no contiene una lista de tarjetas."
+        tarjetas = tarjetas.filter(
+            tarjeta =>
+                tarjeta &&
+                tarjeta.id !== undefined &&
+                tarjeta.nivel &&
+                tarjeta.frances &&
+                tarjeta.espanol
+        );
+
+        actualizarTodo();
+
+        mostrarVista("inicioView");
+
+    } catch (error) {
+
+        console.error(error);
+
+        mostrarMensaje(
+            "No se pudo cargar el archivo de tarjetas."
+        );
+
+        $("info").textContent =
+            "Comprueba que el JSON esté en la misma carpeta.";
+
+    }
+
+
+    if ("serviceWorker" in navigator) {
+
+        navigator.serviceWorker
+            .register("service-worker.js")
+            .catch(error => {
+                console.warn(
+                    "Service Worker no disponible:",
+                    error
+                );
+            });
+    }
+}
+
+
+/* =====================================================
+   NAVEGACIÓN
+===================================================== */
+
+function configurarNavegacion() {
+
+    document
+        .querySelectorAll("[data-view]")
+        .forEach(boton => {
+
+            boton.addEventListener("click", () => {
+
+                const vista =
+                    boton.dataset.view;
+
+                mostrarVista(vista);
+
+            });
+
+        });
+}
+
+
+function mostrarVista(idVista) {
+
+    document
+        .querySelectorAll(".view")
+        .forEach(view => {
+            view.classList.remove("active");
+        });
+
+    const vista = $(idVista);
+
+    if (!vista) return;
+
+    vista.classList.add("active");
+
+    document
+        .querySelectorAll(".nav-button")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.view === idVista
             );
-        }
 
-        tarjetas = data;
+        });
 
-        actualizarEstadisticas();
 
-        aplicarFiltros();
-
-    } catch (error) {
-
-        console.error(
-            "Error cargando las tarjetas:",
-            error
-        );
-
-        mostrarErrorCarga(error);
-    }
-}
-
-
-/* ==========================================
-   EVENTOS
-   ========================================== */
-
-function configurarEventos() {
-
-    nivelFilter.addEventListener(
-        "change",
-        aplicarFiltros
-    );
-
-    modoFiltro.addEventListener(
-        "change",
-        aplicarFiltros
-    );
-
-
-    mostrarBtn.addEventListener(
-        "click",
-        mostrarRespuesta
-    );
-
-
-    favoritaBtn.addEventListener(
-        "click",
-        marcarFavorita
-    );
-
-
-    anteriorBtn.addEventListener(
-        "click",
-        anterior
-    );
-
-
-    escucharBtn.addEventListener(
-        "click",
-        escuchar
-    );
-
-
-    siguienteBtn.addEventListener(
-        "click",
-        siguiente
-    );
-
-
-    dificilBtn.addEventListener(
-        "click",
-        marcarDificil
-    );
-
-
-    facilBtn.addEventListener(
-        "click",
-        marcarFacil
-    );
-
-
-    inicioBtn.addEventListener(
-        "click",
-        irInicio
-    );
-
-
-    todasBtn.addEventListener(
-        "click",
-        mostrarTodas
-    );
-
-
-    resumenBtn.addEventListener(
-        "click",
-        mostrarResumen
-    );
-
-
-    reiniciarBtn.addEventListener(
-        "click",
-        reiniciarProgreso
-    );
-}
-
-
-/* ==========================================
-   LOCAL STORAGE
-   ========================================== */
-
-function obtenerProgreso() {
-
-    try {
-
-        return JSON.parse(
-            localStorage.getItem("francesGus")
-        ) || {};
-
-    } catch (error) {
-
-        console.error(
-            "Error leyendo progreso:",
-            error
-        );
-
-        return {};
-    }
-}
-
-
-function obtenerFavoritas() {
-
-    try {
-
-        return JSON.parse(
-            localStorage.getItem(
-                "francesFavoritas"
-            )
-        ) || [];
-
-    } catch (error) {
-
-        console.error(
-            "Error leyendo favoritas:",
-            error
-        );
-
-        return [];
-    }
-}
-
-
-function guardarLocalStorage(
-    clave,
-    valor
-) {
-
-    localStorage.setItem(
-        clave,
-        JSON.stringify(valor)
-    );
-}
-
-
-/* ==========================================
-   FILTROS
-   ========================================== */
-
-function aplicarFiltros() {
-
-    const nivel = nivelFilter.value;
-    const modo = modoFiltro.value;
-
-    const progreso = obtenerProgreso();
-    const favoritas = obtenerFavoritas();
-
-
-    tarjetasFiltradas = tarjetas.filter(card => {
-
-        /* FILTRO POR NIVEL */
-
-        if (
-            nivel !== "Todos" &&
-            card.nivel !== nivel
-        ) {
-
-            return false;
-        }
-
-
-        /* FILTRO POR ESTADO */
-
-        switch (modo) {
-
-            case "favoritas":
-
-                return favoritas.includes(
-                    card.id
-                );
-
-
-            case "aprendidas":
-
-                return Boolean(
-                    progreso[card.id] &&
-                    progreso[card.id].aprendido
-                );
-
-
-            case "dificiles":
-
-                return Boolean(
-                    progreso[card.id] &&
-                    !progreso[card.id].aprendido
-                );
-
-
-            case "pendientes":
-
-                return !progreso[card.id];
-
-
-            case "todas":
-            default:
-
-                return true;
-        }
-    });
-
-
-    indice = 0;
-
-    cargarTarjeta();
-}
-
-
-/* ==========================================
-   CARGAR TARJETA
-   ========================================== */
-
-function cargarTarjeta() {
-
-    if (
-        tarjetasFiltradas.length === 0
-    ) {
-
-        frances.innerText =
-            "No hay tarjetas";
-
-        espanol.innerText = "";
-
-        info.innerText =
-            "Prueba otro nivel o filtro.";
-
-        contador.innerText =
-            "Tarjeta 0 de 0";
-
-        barraProgreso.value = 0;
-
-        mostrarBtn.disabled = true;
-        favoritaBtn.disabled = true;
-        anteriorBtn.disabled = true;
-        escucharBtn.disabled = true;
-        siguienteBtn.disabled = true;
-        dificilBtn.disabled = true;
-        facilBtn.disabled = true;
-
-        actualizarBotonFavorita();
-
-        return;
+    if (idVista === "inicioView") {
+        actualizarDashboard();
     }
 
-
-    mostrarBtn.disabled = false;
-    favoritaBtn.disabled = false;
-    anteriorBtn.disabled = false;
-    escucharBtn.disabled = false;
-    siguienteBtn.disabled = false;
-    dificilBtn.disabled = false;
-    facilBtn.disabled = false;
-
-
-    const card =
-        tarjetasFiltradas[indice];
-
-
-    /* CONTADOR */
-
-    contador.innerText =
-        `Tarjeta ${indice + 1} de ${tarjetasFiltradas.length}`;
-
-
-    /* BARRA */
-
-    const porcentaje =
-        ((indice + 1) /
-        tarjetasFiltradas.length) * 100;
-
-    barraProgreso.value =
-        porcentaje;
-
-
-    /* INFORMACIÓN */
-
-    const tipo =
-        card.tipo === "frase"
-            ? "💬 Frase"
-            : "🔤 Vocabulario";
-
-
-    info.innerText =
-        `📘 ${card.nivel}  |  🏷 ${card.tema}  |  ${tipo}`;
-
-
-    /* FRANCÉS */
-
-    frances.innerText =
-        card.frances;
-
-
-    /* RESPUESTA OCULTA */
-
-    espanol.innerText = "";
-
-
-    /* FAVORITA */
-
-    actualizarBotonFavorita();
-
-
-    /* CLASE PARA EL TIPO */
-
-    frances.classList.remove(
-        "tipo-frase",
-        "tipo-vocabulario"
-    );
-
-
-    if (card.tipo === "frase") {
-
-        frances.classList.add(
-            "tipo-frase"
-        );
-
-    } else {
-
-        frances.classList.add(
-            "tipo-vocabulario"
-        );
+    if (idVista === "repasoView") {
+        actualizarPantallaRepaso();
     }
 
-
-    /* VOLVER ARRIBA */
+    if (idVista === "progresoView") {
+        actualizarProgresoView();
+    }
 
     window.scrollTo({
         top: 0,
@@ -434,282 +212,544 @@ function cargarTarjeta() {
 }
 
 
-/* ==========================================
-   MOSTRAR RESPUESTA
-   ========================================== */
+/* =====================================================
+   EVENTOS
+===================================================== */
 
-function mostrarRespuesta() {
+function configurarEventos() {
 
-    if (
-        tarjetasFiltradas.length === 0
-    ) {
+    $("nivelFilter").addEventListener(
+        "change",
+        () => {
+            flashcardModoRepaso = false;
+            aplicarFiltros();
+        }
+    );
 
-        return;
-    }
+    $("modoFiltro").addEventListener(
+        "change",
+        aplicarFiltros
+    );
 
 
-    const card =
-        tarjetasFiltradas[indice];
+    $("nivelInicio").addEventListener(
+        "change",
+        cambiarNivel
+    );
 
 
-    espanol.innerText =
-        card.espanol;
+    $("headerNivelBtn").addEventListener(
+        "click",
+        () => mostrarVista("inicioView")
+    );
+
+
+    $("mostrarBtn").addEventListener(
+        "click",
+        mostrarRespuesta
+    );
+
+    $("escucharBtn").addEventListener(
+        "click",
+        escuchar
+    );
+
+    $("anteriorBtn").addEventListener(
+        "click",
+        anterior
+    );
+
+    $("siguienteBtn").addEventListener(
+        "click",
+        siguiente
+    );
+
+    $("facilBtn").addEventListener(
+        "click",
+        () => guardarProgreso("facil")
+    );
+
+    $("dificilBtn").addEventListener(
+        "click",
+        () => guardarProgreso("dificil")
+    );
+
+    $("favoritaBtn").addEventListener(
+        "click",
+        marcarFavorita
+    );
+
+
+    $("empezarRepasoBtn").addEventListener(
+        "click",
+        iniciarRepaso
+    );
+
+
+    document
+        .querySelectorAll(".practice-option")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => iniciarPractica(
+                    button.dataset.practice
+                )
+            );
+
+        });
+
+
+    $("nextExerciseBtn").addEventListener(
+        "click",
+        siguienteEjercicio
+    );
+
+
+    $("exerciseAudioBtn").addEventListener(
+        "click",
+        escucharEjercicio
+    );
+
+
+    $("empezarEscrituraBtn").addEventListener(
+        "click",
+        iniciarEscritura
+    );
+
+    $("checkWritingBtn").addEventListener(
+        "click",
+        comprobarEscritura
+    );
+
+    $("nextWritingBtn").addEventListener(
+        "click",
+        siguienteEscritura
+    );
+
+
+    $("startExamBtn").addEventListener(
+        "click",
+        iniciarExamen
+    );
+
+    $("nextExamBtn").addEventListener(
+        "click",
+        siguientePreguntaExamen
+    );
+
+    $("newExamBtn").addEventListener(
+        "click",
+        () => {
+            $("examResult").classList.add("hidden");
+            $("examSetup").classList.remove("hidden");
+        }
+    );
+
+
+    $("resetProgressBtn").addEventListener(
+        "click",
+        reiniciarProgreso
+    );
 }
 
 
-/* ==========================================
-   SIGUIENTE
-   ========================================== */
+/* =====================================================
+   LOCAL STORAGE
+===================================================== */
 
-function siguiente() {
+function guardarDatos() {
 
-    if (
-        tarjetasFiltradas.length === 0
-    ) {
+    localStorage.setItem(
+        "gusProgreso",
+        JSON.stringify(progreso)
+    );
 
-        return;
+    localStorage.setItem(
+        "gusFavoritas",
+        JSON.stringify(favoritas)
+    );
+
+    localStorage.setItem(
+        "gusExamenes",
+        JSON.stringify(historialExamenes)
+    );
+
+    localStorage.setItem(
+        "gusNivel",
+        nivelUsuario
+    );
+}
+
+
+function estadoTarjeta(id) {
+
+    return progreso[String(id)] || "pendiente";
+}
+
+
+/* =====================================================
+   NIVEL
+===================================================== */
+
+function cambiarNivel(event) {
+
+    nivelUsuario =
+        event.target.value;
+
+    localStorage.setItem(
+        "gusNivel",
+        nivelUsuario
+    );
+
+    actualizarNivelUI();
+    actualizarDashboard();
+    aplicarFiltros();
+
+    mostrarMensaje(
+        `Nivel seleccionado: ${nivelUsuario}`
+    );
+}
+
+
+function actualizarNivelUI() {
+
+    $("nivelInicio").value =
+        nivelUsuario;
+
+    $("nivelActualTexto").textContent =
+        nivelUsuario;
+
+    $("headerNivelBtn").textContent =
+        nivelUsuario;
+}
+
+
+/* =====================================================
+   FLASHCARDS
+===================================================== */
+
+function aplicarFiltros() {
+
+    if (!tarjetas.length) return;
+
+    const nivel =
+        $("nivelFilter").value;
+
+    const modo =
+        $("modoFiltro").value;
+
+
+    let lista =
+        tarjetas.filter(tarjeta => {
+
+            if (
+                nivel !== "TODOS" &&
+                tarjeta.nivel !== nivel
+            ) {
+                return false;
+            }
+
+            return true;
+        });
+
+
+    if (flashcardModoRepaso) {
+
+        lista = lista.filter(tarjeta => {
+
+            const estado =
+                estadoTarjeta(tarjeta.id);
+
+            return (
+                estado !== "facil" ||
+                estado === "dificil"
+            );
+
+        });
+
+    } else {
+
+        if (modo === "pendientes") {
+
+            lista = lista.filter(
+                tarjeta =>
+                    estadoTarjeta(tarjeta.id)
+                    === "pendiente"
+            );
+
+        }
+
+        if (modo === "dificiles") {
+
+            lista = lista.filter(
+                tarjeta =>
+                    estadoTarjeta(tarjeta.id)
+                    === "dificil"
+            );
+
+        }
+
+        if (modo === "aprendidas") {
+
+            lista = lista.filter(
+                tarjeta =>
+                    estadoTarjeta(tarjeta.id)
+                    === "facil"
+            );
+
+        }
+
+        if (modo === "favoritas") {
+
+            lista = lista.filter(
+                tarjeta =>
+                    favoritas.includes(tarjeta.id)
+            );
+
+        }
+
     }
 
 
-    indice++;
+    tarjetasFiltradas = lista;
 
-
-    if (
-        indice >=
-        tarjetasFiltradas.length
-    ) {
-
+    if (indice >= tarjetasFiltradas.length) {
         indice = 0;
     }
 
-
     cargarTarjeta();
 }
 
 
-/* ==========================================
-   ANTERIOR
-   ========================================== */
+function cargarTarjeta() {
+
+    if (!tarjetasFiltradas.length) {
+
+        $("frances").textContent =
+            "No hay tarjetas";
+
+        $("espanol").textContent =
+            "Prueba otro filtro.";
+
+        $("contador").textContent =
+            "0 / 0";
+
+        $("info").textContent =
+            "Sin resultados";
+
+        $("barraProgreso").style.width =
+            "0%";
+
+        $("mostrarBtn").disabled = true;
+        $("escucharBtn").disabled = true;
+
+        return;
+    }
+
+
+    $("mostrarBtn").disabled = false;
+    $("escucharBtn").disabled = false;
+
+
+    const tarjeta =
+        tarjetasFiltradas[indice];
+
+
+    $("frances").textContent =
+        tarjeta.frances;
+
+    $("espanol").textContent =
+        tarjeta.espanol;
+
+
+    $("tipoTarjeta").textContent =
+        tarjeta.tipo === "frase"
+            ? "FRASE"
+            : "VOCABULARIO";
+
+
+    $("contador").textContent =
+        `${indice + 1} / ${tarjetasFiltradas.length}`;
+
+
+    $("info").textContent =
+        `${tarjeta.nivel} · ${tarjeta.tema}`;
+
+
+    const porcentaje =
+        ((indice + 1) /
+            tarjetasFiltradas.length) * 100;
+
+
+    $("barraProgreso").style.width =
+        `${porcentaje}%`;
+
+
+    $("respuestaBox")
+        .classList.add("hidden");
+
+
+    actualizarBotonFavorita();
+
+
+    $("anteriorBtn").disabled =
+        indice === 0;
+
+    $("siguienteBtn").disabled =
+        indice === tarjetasFiltradas.length - 1;
+
+}
+
+
+function mostrarRespuesta() {
+
+    $("respuestaBox")
+        .classList.remove("hidden");
+}
+
+
+function siguiente() {
+
+    if (!tarjetasFiltradas.length) return;
+
+    if (
+        indice <
+        tarjetasFiltradas.length - 1
+    ) {
+
+        indice++;
+
+        cargarTarjeta();
+
+    } else {
+
+        mostrarMensaje(
+            "Has llegado al final de este bloque."
+        );
+
+    }
+}
+
 
 function anterior() {
 
-    if (
-        tarjetasFiltradas.length === 0
-    ) {
+    if (!tarjetasFiltradas.length) return;
 
-        return;
+    if (indice > 0) {
+
+        indice--;
+
+        cargarTarjeta();
+
     }
-
-
-    indice--;
-
-
-    if (indice < 0) {
-
-        indice =
-            tarjetasFiltradas.length - 1;
-    }
-
-
-    cargarTarjeta();
 }
 
 
-/* ==========================================
+/* =====================================================
    AUDIO
-   ========================================== */
+===================================================== */
 
-function escuchar() {
+function hablar(texto) {
 
-    if (
-        tarjetasFiltradas.length === 0
-    ) {
-
-        return;
-    }
-
-
-    if (
-        !("speechSynthesis" in window)
-    ) {
+    if (!("speechSynthesis" in window)) {
 
         mostrarMensaje(
-            "Tu navegador no permite la pronunciación automática."
+            "Tu navegador no admite audio."
         );
 
         return;
     }
-
-
-    const texto =
-        tarjetasFiltradas[indice].frances;
 
 
     window.speechSynthesis.cancel();
 
+    const utterance =
+        new SpeechSynthesisUtterance(texto);
 
-    const voz =
-        new SpeechSynthesisUtterance(
-            texto
-        );
-
-
-    voz.lang = "fr-FR";
-    voz.rate = 0.9;
-    voz.pitch = 1;
-    voz.volume = 1;
-
+    utterance.lang = "fr-FR";
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
 
     window.speechSynthesis.speak(
-        voz
+        utterance
     );
 }
 
 
-/* ==========================================
-   MARCAR FÁCIL
-   ========================================== */
+function escuchar() {
 
-function marcarFacil() {
+    if (!tarjetasFiltradas.length) return;
 
-    guardarProgreso(true);
+    hablar(
+        tarjetasFiltradas[indice].frances
+    );
 }
 
 
-/* ==========================================
-   MARCAR DIFÍCIL
-   ========================================== */
+/* =====================================================
+   PROGRESO
+===================================================== */
 
-function marcarDificil() {
+function guardarProgreso(estado) {
 
-    guardarProgreso(false);
-}
+    if (!tarjetasFiltradas.length) return;
+
+    const tarjeta =
+        tarjetasFiltradas[indice];
+
+    progreso[String(tarjeta.id)] =
+        estado;
+
+    guardarDatos();
+
+    actualizarTodo();
 
 
-/* ==========================================
-   GUARDAR PROGRESO
-   ========================================== */
+    if (estado === "facil") {
 
-function guardarProgreso(
-    aprendido
-) {
+        mostrarMensaje(
+            "¡Muy bien! Tarjeta aprendida."
+        );
 
-    if (
-        tarjetasFiltradas.length === 0
-    ) {
+    } else {
 
-        return;
+        mostrarMensaje(
+            "La añadiremos a tus repasos."
+        );
+
     }
 
 
-    const progreso =
-        obtenerProgreso();
-
-
-    const id =
-        tarjetasFiltradas[indice].id;
-
-
-    progreso[id] = {
-
-        aprendido: aprendido,
-
-        fecha:
-            new Date().toISOString()
-    };
-
-
-    guardarLocalStorage(
-        "francesGus",
-        progreso
-    );
-
-
-    actualizarEstadisticas();
-
-
     /*
-        Si estamos dentro de un filtro,
-        recalculamos la lista.
-    */
-
-    const tarjetaActualId = id;
-
-
-    aplicarFiltros();
-
-
-    /*
-        Si la tarjeta sigue dentro
-        del filtro, intentamos mantener
-        una posición razonable.
+       Después de marcar una tarjeta,
+       pasamos a la siguiente.
     */
 
     if (
-        tarjetasFiltradas.length > 0
+        indice <
+        tarjetasFiltradas.length - 1
     ) {
 
-        const nuevaPosicion =
-            tarjetasFiltradas.findIndex(
-                card =>
-                    card.id === tarjetaActualId
-            );
+        indice++;
 
+        cargarTarjeta();
 
-        if (
-            nuevaPosicion !== -1
-        ) {
+    } else {
 
-            indice =
-                (nuevaPosicion + 1) %
-                tarjetasFiltradas.length;
+        cargarTarjeta();
 
-            cargarTarjeta();
-
-        } else {
-
-            /*
-                Si la tarjeta desapareció
-                del filtro, mostramos la
-                primera disponible.
-            */
-
-            indice = 0;
-
-            cargarTarjeta();
-        }
     }
-
-
-    mostrarMensaje(
-        aprendido
-            ? "✅ Marcada como aprendida"
-            : "❌ Marcada como difícil"
-    );
 }
 
-
-/* ==========================================
-   FAVORITAS
-   ========================================== */
 
 function marcarFavorita() {
 
-    if (
-        tarjetasFiltradas.length === 0
-    ) {
-
-        return;
-    }
-
-
-    const favoritas =
-        obtenerFavoritas();
-
+    if (!tarjetasFiltradas.length) return;
 
     const id =
         tarjetasFiltradas[indice].id;
-
 
     const posicion =
         favoritas.indexOf(id);
@@ -720,7 +760,7 @@ function marcarFavorita() {
         favoritas.push(id);
 
         mostrarMensaje(
-            "⭐ Añadida a favoritas"
+            "⭐ Añadida a favoritas."
         );
 
     } else {
@@ -731,380 +771,1282 @@ function marcarFavorita() {
         );
 
         mostrarMensaje(
-            "☆ Eliminada de favoritas"
+            "Favorita eliminada."
         );
+
     }
 
 
-    guardarLocalStorage(
-        "francesFavoritas",
-        favoritas
-    );
-
-
-    actualizarEstadisticas();
-
+    guardarDatos();
 
     actualizarBotonFavorita();
+    actualizarDashboard();
+}
 
 
-    /*
-        Si estamos viendo solo favoritas
-        y quitamos la favorita actual,
-        actualizamos la lista.
-    */
+function actualizarBotonFavorita() {
 
-    if (
-        modoFiltro.value === "favoritas"
-    ) {
+    if (!tarjetasFiltradas.length) return;
+
+    const id =
+        tarjetasFiltradas[indice].id;
+
+    const esFavorita =
+        favoritas.includes(id);
+
+    $("favoritaBtn").textContent =
+        esFavorita ? "★" : "☆";
+
+    $("favoritaBtn")
+        .classList.toggle(
+            "favorite",
+            esFavorita
+        );
+}
+
+
+/* =====================================================
+   REPASO
+===================================================== */
+
+function iniciarRepaso() {
+
+    const nivel =
+        nivelUsuario === "TODOS"
+            ? "TODOS"
+            : nivelUsuario;
+
+
+    $("nivelFilter").value =
+        nivel;
+
+
+    $("modoFiltro").value =
+        "todas";
+
+
+    flashcardModoRepaso = true;
+
+    indice = 0;
+
+    mostrarVista("flashcardsView");
+
+    aplicarFiltros();
+
+
+    if (!tarjetasFiltradas.length) {
+
+        flashcardModoRepaso = false;
+
+        mostrarMensaje(
+            "¡No tienes repasos pendientes! 🎉"
+        );
 
         aplicarFiltros();
     }
 }
 
 
-/* ==========================================
-   ACTUALIZAR BOTÓN FAVORITA
-   ========================================== */
+function actualizarPantallaRepaso() {
 
-function actualizarBotonFavorita() {
+    const pendientes =
+        contarPorEstado("pendiente");
 
-    if (
-        tarjetasFiltradas.length === 0
-    ) {
+    const dificiles =
+        contarPorEstado("dificil");
 
-        favoritaBtn.innerText =
-            "☆ Favorita";
+    const fav =
+        favoritas.length;
+
+
+    $("repasoPendientes").textContent =
+        pendientes;
+
+    $("repasoDificiles").textContent =
+        dificiles;
+
+    $("repasoFavoritas").textContent =
+        fav;
+}
+
+
+/* =====================================================
+   PRÁCTICA
+===================================================== */
+
+function iniciarPractica(tipo) {
+
+    practicaTipo = tipo;
+
+    practicaTarjetas =
+        obtenerTarjetasNivel(
+            nivelUsuario
+        );
+
+
+    if (practicaTarjetas.length < 4) {
+
+        mostrarMensaje(
+            "Necesitamos al menos 4 tarjetas para este ejercicio."
+        );
 
         return;
     }
 
 
-    const favoritas =
-        obtenerFavoritas();
+    mezclar(practicaTarjetas);
+
+    practicaTarjetas =
+        practicaTarjetas.slice(0, 10);
+
+    practicaIndice = 0;
+    practicaPuntos = 0;
+    practicaRespondida = false;
 
 
-    const id =
-        tarjetasFiltradas[indice].id;
+    $("practicaMenu")
+        .classList.add("hidden");
+
+    $("practicaGame")
+        .classList.remove("hidden");
 
 
-    const esFavorita =
-        favoritas.includes(id);
+    mostrarEjercicio();
+}
 
 
-    if (esFavorita) {
+function mostrarEjercicio() {
 
-        favoritaBtn.innerText =
-            "⭐ Quitar favorita";
+    if (
+        practicaIndice >=
+        practicaTarjetas.length
+    ) {
 
-        favoritaBtn.classList.add(
-            "is-favorite"
-        );
+        terminarPractica();
+
+        return;
+    }
+
+
+    practicaRespondida = false;
+
+
+    const tarjeta =
+        practicaTarjetas[practicaIndice];
+
+
+    $("ejercicioNumero").textContent =
+        `Pregunta ${practicaIndice + 1} / ${practicaTarjetas.length}`;
+
+
+    $("ejercicioPuntos").textContent =
+        `${practicaPuntos} puntos`;
+
+
+    $("exerciseFeedback")
+        .classList.add("hidden");
+
+
+    $("nextExerciseBtn")
+        .classList.add("hidden");
+
+
+    const audioBtn =
+        $("exerciseAudioBtn");
+
+
+    audioBtn.classList.add("hidden");
+
+
+    let preguntaFrances;
+
+
+    if (practicaTipo === "reverse") {
+
+        $("exerciseLabel").textContent =
+            "ESPAÑOL";
+
+        preguntaFrances = false;
 
     } else {
 
-        favoritaBtn.innerText =
-            "☆ Favorita";
+        $("exerciseLabel").textContent =
+            "FRANÇAIS";
 
-        favoritaBtn.classList.remove(
-            "is-favorite"
-        );
+        preguntaFrances = true;
+
     }
+
+
+    if (practicaTipo === "listening") {
+
+        $("exerciseLabel").textContent =
+            "ESCUCHA";
+
+        $("exerciseQuestionText").textContent =
+            "Pulsa «Escuchar»";
+
+        audioBtn.classList.remove("hidden");
+
+        audioBtn.onclick =
+            () => hablar(tarjeta.frances);
+
+    } else {
+
+        $("exerciseQuestionText").textContent =
+            preguntaFrances
+                ? tarjeta.frances
+                : tarjeta.espanol;
+
+    }
+
+
+    const opciones =
+        crearOpciones(
+            tarjeta,
+            practicaTipo === "reverse"
+                ? "frances"
+                : "espanol"
+        );
+
+
+    const contenedor =
+        $("exerciseOptions");
+
+    contenedor.innerHTML = "";
+
+
+    opciones.forEach(opcion => {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "exercise-option";
+
+        button.textContent =
+            opcion.texto;
+
+        button.addEventListener(
+            "click",
+            () => responderEjercicio(
+                button,
+                opcion.correcta
+            )
+        );
+
+        contenedor.appendChild(button);
+
+    });
 }
 
 
-/* ==========================================
-   ESTADÍSTICAS
-   ========================================== */
+function responderEjercicio(
+    boton,
+    correcta
+) {
 
-function actualizarEstadisticas() {
+    if (practicaRespondida) return;
 
-    const progreso =
-        obtenerProgreso();
-
-    const favoritas =
-        obtenerFavoritas();
+    practicaRespondida = true;
 
 
-    let aprendidas = 0;
-    let dificiles = 0;
-
-
-    Object.values(progreso)
-        .forEach(item => {
-
-            if (item.aprendido) {
-
-                aprendidas++;
-
-            } else {
-
-                dificiles++;
-            }
+    document
+        .querySelectorAll(
+            "#exerciseOptions .exercise-option"
+        )
+        .forEach(button => {
+            button.disabled = true;
         });
 
 
-    document.getElementById(
-        "aprendidas"
-    ).innerText =
-        aprendidas;
+    if (correcta) {
+
+        boton.classList.add("correct");
+
+        practicaPuntos++;
+
+        $("exerciseFeedback").textContent =
+            "✅ ¡Correcto!";
+
+        $("exerciseFeedback")
+            .classList.remove("hidden");
+
+    } else {
+
+        boton.classList.add("wrong");
+
+        $("exerciseFeedback").textContent =
+            `❌ No exactamente. Respuesta correcta: ${
+                practicaTipo === "reverse"
+                    ? practicaTarjetas[practicaIndice].frances
+                    : practicaTarjetas[practicaIndice].espanol
+            }`;
+
+        $("exerciseFeedback")
+            .classList.remove("hidden");
+
+    }
 
 
-    document.getElementById(
-        "dificiles"
-    ).innerText =
-        dificiles;
+    $("ejercicioPuntos").textContent =
+        `${practicaPuntos} puntos`;
 
-
-    document.getElementById(
-        "favoritas"
-    ).innerText =
-        favoritas.length;
-
-
-    document.getElementById(
-        "total"
-    ).innerText =
-        tarjetas.length;
+    $("nextExerciseBtn")
+        .classList.remove("hidden");
 }
 
 
-/* ==========================================
-   INICIO
-   ========================================== */
+function siguienteEjercicio() {
 
-function irInicio() {
+    practicaIndice++;
 
-    nivelFilter.value = "Todos";
-    modoFiltro.value = "todas";
-
-    indice = 0;
-
-    aplicarFiltros();
+    mostrarEjercicio();
 }
 
 
-/* ==========================================
-   MOSTRAR TODAS
-   ========================================== */
+function terminarPractica() {
 
-function mostrarTodas() {
+    $("practicaGame")
+        .classList.add("hidden");
 
-    nivelFilter.value = "Todos";
-    modoFiltro.value = "todas";
+    $("practicaMenu")
+        .classList.remove("hidden");
 
-    indice = 0;
-
-    aplicarFiltros();
 
     mostrarMensaje(
-        "📚 Mostrando todas las tarjetas"
+        `Práctica terminada: ${practicaPuntos}/${practicaTarjetas.length} correctas.`
     );
 }
 
 
-/* ==========================================
-   RESUMEN
-   ========================================== */
+/* =====================================================
+   ESCRITURA
+===================================================== */
 
-function mostrarResumen() {
+function iniciarEscritura() {
 
-    const progreso =
-        obtenerProgreso();
-
-    const favoritas =
-        obtenerFavoritas();
-
-
-    let aprendidas = 0;
-    let dificiles = 0;
+    escrituraTarjetas =
+        obtenerTarjetasNivel(
+            nivelUsuario
+        );
 
 
-    Object.values(progreso)
-        .forEach(item => {
+    mezclar(escrituraTarjetas);
 
-            if (item.aprendido) {
+    escrituraTarjetas =
+        escrituraTarjetas.slice(0, 10);
 
-                aprendidas++;
+    escrituraIndice = 0;
+    escrituraAciertos = 0;
+    escrituraRespondida = false;
 
-            } else {
 
-                dificiles++;
-            }
+    $("escrituraSetup")
+        .classList.add("hidden");
+
+    $("escrituraGame")
+        .classList.remove("hidden");
+
+
+    mostrarPreguntaEscritura();
+}
+
+
+function mostrarPreguntaEscritura() {
+
+    if (
+        escrituraIndice >=
+        escrituraTarjetas.length
+    ) {
+
+        terminarEscritura();
+
+        return;
+    }
+
+
+    const tarjeta =
+        escrituraTarjetas[escrituraIndice];
+
+
+    escrituraRespondida = false;
+
+
+    $("writingNumber").textContent =
+        `Pregunta ${escrituraIndice + 1} / ${escrituraTarjetas.length}`;
+
+
+    $("writingScore").textContent =
+        `${escrituraAciertos} aciertos`;
+
+
+    $("writingPrompt").textContent =
+        tarjeta.espanol;
+
+
+    $("writingInput").value = "";
+
+    $("writingInput").disabled = false;
+
+
+    $("checkWritingBtn")
+        .classList.remove("hidden");
+
+
+    $("writingFeedback")
+        .classList.add("hidden");
+
+
+    $("nextWritingBtn")
+        .classList.add("hidden");
+
+
+    setTimeout(
+        () => $("writingInput").focus(),
+        50
+    );
+}
+
+
+function comprobarEscritura() {
+
+    if (escrituraRespondida) return;
+
+
+    const respuesta =
+        $("writingInput").value.trim();
+
+
+    if (!respuesta) {
+
+        mostrarMensaje(
+            "Escribe una respuesta antes de comprobar."
+        );
+
+        return;
+    }
+
+
+    escrituraRespondida = true;
+
+
+    const tarjeta =
+        escrituraTarjetas[escrituraIndice];
+
+
+    const usuario =
+        normalizarTexto(respuesta);
+
+    const correcta =
+        normalizarTexto(tarjeta.frances);
+
+
+    const esCorrecta =
+        usuario === correcta;
+
+
+    if (esCorrecta) {
+
+        escrituraAciertos++;
+
+        $("writingFeedback").innerHTML =
+            "✅ <strong>¡Correcto!</strong>";
+
+    } else {
+
+        $("writingFeedback").innerHTML =
+            `❌ <strong>Respuesta correcta:</strong><br>${escapeHtml(tarjeta.frances)}`;
+
+    }
+
+
+    $("writingFeedback")
+        .classList.remove("hidden");
+
+
+    $("writingInput").disabled = true;
+
+
+    $("checkWritingBtn")
+        .classList.add("hidden");
+
+
+    $("nextWritingBtn")
+        .classList.remove("hidden");
+}
+
+
+function siguienteEscritura() {
+
+    escrituraIndice++;
+
+    mostrarPreguntaEscritura();
+}
+
+
+function terminarEscritura() {
+
+    $("escrituraGame")
+        .classList.add("hidden");
+
+    $("escrituraSetup")
+        .classList.remove("hidden");
+
+
+    mostrarMensaje(
+        `Escritura terminada: ${escrituraAciertos}/${escrituraTarjetas.length} correctas.`
+    );
+}
+
+
+/* =====================================================
+   EXÁMENES
+===================================================== */
+
+function iniciarExamen() {
+
+    const nivel =
+        $("examLevel").value;
+
+    const cantidad =
+        Number(
+            $("examLength").value
+        );
+
+
+    let disponibles =
+        tarjetas.filter(
+            tarjeta =>
+                tarjeta.nivel === nivel
+        );
+
+
+    if (disponibles.length < 4) {
+
+        mostrarMensaje(
+            "No hay suficientes tarjetas para este examen."
+        );
+
+        return;
+    }
+
+
+    mezclar(disponibles);
+
+    examenTarjetas =
+        disponibles.slice(
+            0,
+            Math.min(
+                cantidad,
+                disponibles.length
+            )
+        );
+
+
+    examenIndice = 0;
+    examenCorrectas = 0;
+    examenFalladas = 0;
+    examenRespondida = false;
+
+
+    $("examSetup")
+        .classList.add("hidden");
+
+    $("examResult")
+        .classList.add("hidden");
+
+    $("examGame")
+        .classList.remove("hidden");
+
+
+    mostrarPreguntaExamen();
+}
+
+
+function mostrarPreguntaExamen() {
+
+    if (
+        examenIndice >=
+        examenTarjetas.length
+    ) {
+
+        terminarExamen();
+
+        return;
+    }
+
+
+    examenRespondida = false;
+
+
+    const tarjeta =
+        examenTarjetas[examenIndice];
+
+
+    $("examQuestionNumber").textContent =
+        `Pregunta ${examenIndice + 1} / ${examenTarjetas.length}`;
+
+
+    $("examScore").textContent =
+        `${examenCorrectas} correctas`;
+
+
+    $("examFeedback")
+        .classList.add("hidden");
+
+
+    $("nextExamBtn")
+        .classList.add("hidden");
+
+
+    $("examQuestionType").textContent =
+        "FRANCÉS";
+
+
+    $("examQuestion").textContent =
+        tarjeta.frances;
+
+
+    const opciones =
+        crearOpciones(
+            tarjeta,
+            "espanol"
+        );
+
+
+    const contenedor =
+        $("examOptions");
+
+    contenedor.innerHTML = "";
+
+
+    opciones.forEach(opcion => {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "exercise-option";
+
+        button.textContent =
+            opcion.texto;
+
+        button.addEventListener(
+            "click",
+            () => responderExamen(
+                button,
+                opcion.correcta
+            )
+        );
+
+        contenedor.appendChild(button);
+
+    });
+}
+
+
+function responderExamen(
+    boton,
+    correcta
+) {
+
+    if (examenRespondida) return;
+
+    examenRespondida = true;
+
+
+    document
+        .querySelectorAll(
+            "#examOptions .exercise-option"
+        )
+        .forEach(button => {
+            button.disabled = true;
         });
 
 
+    if (correcta) {
+
+        boton.classList.add("correct");
+
+        examenCorrectas++;
+
+        $("examFeedback").innerHTML =
+            "✅ Correcto.";
+
+    } else {
+
+        boton.classList.add("wrong");
+
+        examenFalladas++;
+
+        const tarjeta =
+            examenTarjetas[examenIndice];
+
+        $("examFeedback").innerHTML =
+            `❌ Incorrecto.<br>
+             Respuesta correcta:
+             <strong>${escapeHtml(tarjeta.espanol)}</strong>`;
+
+    }
+
+
+    $("examFeedback")
+        .classList.remove("hidden");
+
+
+    $("examScore").textContent =
+        `${examenCorrectas} correctas`;
+
+
+    $("nextExamBtn")
+        .classList.remove("hidden");
+}
+
+
+function siguientePreguntaExamen() {
+
+    examenIndice++;
+
+    mostrarPreguntaExamen();
+}
+
+
+function terminarExamen() {
+
+    const total =
+        examenTarjetas.length;
+
+
     const porcentaje =
-        tarjetas.length > 0
+        Math.round(
+            (examenCorrectas / total) * 100
+        );
+
+
+    historialExamenes.unshift({
+
+        fecha: new Date().toISOString(),
+
+        nivel:
+            examenTarjetas[0]?.nivel || "A1",
+
+        total,
+
+        correctas:
+            examenCorrectas,
+
+        falladas:
+            examenFalladas,
+
+        porcentaje
+
+    });
+
+
+    historialExamenes =
+        historialExamenes.slice(0, 10);
+
+
+    guardarDatos();
+
+
+    $("examGame")
+        .classList.add("hidden");
+
+    $("examResult")
+        .classList.remove("hidden");
+
+
+    $("resultScore").textContent =
+        `${porcentaje}%`;
+
+    $("resultCorrect").textContent =
+        examenCorrectas;
+
+    $("resultWrong").textContent =
+        examenFalladas;
+
+
+    if (porcentaje >= 90) {
+
+        $("resultTitle").textContent =
+            "¡Excelente! 🏆";
+
+        $("resultText").textContent =
+            "Tienes un dominio muy sólido de este bloque.";
+
+    } else if (porcentaje >= 70) {
+
+        $("resultTitle").textContent =
+            "¡Muy bien! 👏";
+
+        $("resultText").textContent =
+            "Vas por muy buen camino. Sigue practicando.";
+
+    } else if (porcentaje >= 50) {
+
+        $("resultTitle").textContent =
+            "Buen comienzo 💪";
+
+        $("resultText").textContent =
+            "Repasa las preguntas falladas y vuelve a intentarlo.";
+
+    } else {
+
+        $("resultTitle").textContent =
+            "A seguir practicando 📚";
+
+        $("resultText").textContent =
+            "El repaso te ayudará a consolidar estas palabras.";
+
+    }
+
+
+    actualizarTodo();
+}
+
+
+/* =====================================================
+   OPCIONES MÚLTIPLES
+===================================================== */
+
+function crearOpciones(
+    tarjetaCorrecta,
+    campoRespuesta
+) {
+
+    const candidatos =
+        tarjetas.filter(
+            tarjeta =>
+                tarjeta.id !==
+                tarjetaCorrecta.id
+        );
+
+
+    mezclar(candidatos);
+
+
+    const distractores =
+        candidatos
+            .slice(0, 3)
+            .map(
+                tarjeta =>
+                    tarjeta[campoRespuesta]
+            );
+
+
+    const opciones = [
+
+        {
+            texto:
+                tarjetaCorrecta[campoRespuesta],
+
+            correcta: true
+
+        },
+
+        ...distractores.map(
+            texto => ({
+
+                texto,
+
+                correcta: false
+
+            })
+        )
+
+    ];
+
+
+    mezclar(opciones);
+
+    return opciones;
+}
+
+
+/* =====================================================
+   PROGRESO / DASHBOARD
+===================================================== */
+
+function actualizarTodo() {
+
+    actualizarEstadisticas();
+
+    actualizarDashboard();
+
+    actualizarProgresoView();
+
+    actualizarPantallaRepaso();
+}
+
+
+function actualizarDashboard() {
+
+    if (!tarjetas.length) return;
+
+
+    const nivel =
+        nivelUsuario;
+
+
+    let lista =
+        nivel === "TODOS"
+            ? tarjetas
+            : tarjetas.filter(
+                t => t.nivel === nivel
+            );
+
+
+    const aprendidas =
+        lista.filter(
+            t => estadoTarjeta(t.id) === "facil"
+        ).length;
+
+
+    const dificiles =
+        lista.filter(
+            t => estadoTarjeta(t.id) === "dificil"
+        ).length;
+
+
+    const pendientes =
+        lista.filter(
+            t => estadoTarjeta(t.id) === "pendiente"
+        ).length;
+
+
+    const porcentaje =
+        lista.length
             ? Math.round(
-                (aprendidas /
-                tarjetas.length) * 100
+                (aprendidas / lista.length) * 100
             )
             : 0;
 
 
-    alert(
-`📊 RESUMEN
+    $("progresoPorcentaje").textContent =
+        `${porcentaje}%`;
 
-✅ Aprendidas: ${aprendidas}
+    $("progresoInicio").style.width =
+        `${porcentaje}%`;
 
-❌ Difíciles: ${dificiles}
+    $("inicioAprendidas").textContent =
+        aprendidas;
 
-⭐ Favoritas: ${favoritas.length}
+    $("inicioPendientes").textContent =
+        pendientes;
 
-📚 Total: ${tarjetas.length}
+    $("inicioDificiles").textContent =
+        dificiles;
 
-🎯 Progreso: ${porcentaje}%`
+
+    $("repasoPendientesTexto").textContent =
+        `${pendientes} tarjetas pendientes`;
+
+}
+
+
+function actualizarEstadisticas() {
+
+    $("statTotal").textContent =
+        tarjetas.length;
+
+    $("statLearned").textContent =
+        contarPorEstado("facil");
+
+    $("statDifficult").textContent =
+        contarPorEstado("dificil");
+
+    $("statFavorites").textContent =
+        favoritas.length;
+}
+
+
+function contarPorEstado(estado) {
+
+    return tarjetas.filter(
+        tarjeta =>
+            estadoTarjeta(tarjeta.id) === estado
+    ).length;
+}
+
+
+/* =====================================================
+   PANTALLA PROGRESO
+===================================================== */
+
+function actualizarProgresoView() {
+
+    if (!tarjetas.length) return;
+
+
+    const niveles =
+        ["A1", "A2", "B1", "B2"];
+
+
+    const contenedor =
+        $("levelProgressList");
+
+    contenedor.innerHTML = "";
+
+
+    niveles.forEach(nivel => {
+
+        const lista =
+            tarjetas.filter(
+                t => t.nivel === nivel
+            );
+
+
+        const aprendidas =
+            lista.filter(
+                t => estadoTarjeta(t.id)
+                    === "facil"
+            ).length;
+
+
+        const porcentaje =
+            lista.length
+                ? Math.round(
+                    (aprendidas / lista.length) * 100
+                )
+                : 0;
+
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "level-row";
+
+
+        row.innerHTML = `
+
+            <div class="level-row-header">
+                <strong>${nivel}</strong>
+                <span>
+                    ${aprendidas}/${lista.length}
+                    · ${porcentaje}%
+                </span>
+            </div>
+
+            <div class="progress-track">
+                <div
+                    class="progress-fill"
+                    style="width:${porcentaje}%"
+                ></div>
+            </div>
+        `;
+
+
+        contenedor.appendChild(row);
+
+    });
+
+
+    actualizarHistorialExamenes();
+}
+
+
+function actualizarHistorialExamenes() {
+
+    const contenedor =
+        $("examHistoryList");
+
+
+    if (!historialExamenes.length) {
+
+        contenedor.innerHTML =
+            `<p class="empty-text">
+                Todavía no has realizado ningún examen.
+            </p>`;
+
+        return;
+    }
+
+
+    contenedor.innerHTML = "";
+
+
+    historialExamenes
+        .slice(0, 5)
+        .forEach(examen => {
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "exam-history-item";
+
+
+            const fecha =
+                new Date(
+                    examen.fecha
+                ).toLocaleDateString(
+                    "es-ES"
+                );
+
+
+            item.innerHTML = `
+
+                <div>
+                    <strong>
+                        Examen ${escapeHtml(examen.nivel)}
+                    </strong>
+
+                    <small>
+                        ${fecha} ·
+                        ${examen.correctas}/${examen.total}
+                    </small>
+                </div>
+
+                <div class="exam-history-score">
+                    ${examen.porcentaje}%
+                </div>
+            `;
+
+
+            contenedor.appendChild(item);
+
+        });
+}
+
+
+/* =====================================================
+   UTILIDADES
+===================================================== */
+
+function obtenerTarjetasNivel(nivel) {
+
+    if (nivel === "TODOS") {
+        return [...tarjetas];
+    }
+
+    return tarjetas.filter(
+        tarjeta =>
+            tarjeta.nivel === nivel
     );
 }
 
 
-/* ==========================================
-   REINICIAR PROGRESO
-   ========================================== */
+function mezclar(array) {
+
+    for (
+        let i = array.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+
+        [
+            array[i],
+            array[j]
+        ] =
+        [
+            array[j],
+            array[i]
+        ];
+    }
+
+    return array;
+}
+
+
+function normalizarTexto(texto) {
+
+    return texto
+
+        .toLowerCase()
+
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+
+        .replace(
+            /[.,!?¿¡;:"'’()-]/g,
+            " "
+        )
+
+        .replace(
+            /\s+/g,
+            " "
+        )
+
+        .trim();
+}
+
+
+function escapeHtml(texto) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        texto;
+
+    return div.innerHTML;
+}
+
+
+function mostrarMensaje(texto) {
+
+    const mensaje =
+        $("mensaje");
+
+    mensaje.textContent =
+        texto;
+
+    mensaje.classList.add("show");
+
+
+    clearTimeout(
+        mostrarMensaje.timeout
+    );
+
+
+    mostrarMensaje.timeout =
+        setTimeout(
+            () => {
+                mensaje.classList.remove(
+                    "show"
+                );
+            },
+            2200
+        );
+}
+
 
 function reiniciarProgreso() {
 
     const confirmar =
         confirm(
-            "¿Seguro que quieres borrar todo el progreso y las favoritas?"
+            "¿Seguro que quieres borrar todo tu progreso, favoritos y resultados de exámenes?"
         );
 
 
-    if (!confirmar) {
-
-        return;
-    }
+    if (!confirmar) return;
 
 
-    localStorage.removeItem(
-        "francesGus"
-    );
-
-    localStorage.removeItem(
-        "francesFavoritas"
-    );
+    progreso = {};
+    favoritas = [];
+    historialExamenes = [];
 
 
-    actualizarEstadisticas();
+    guardarDatos();
 
-
-    nivelFilter.value = "Todos";
-    modoFiltro.value = "todas";
-
-    indice = 0;
+    actualizarTodo();
 
     aplicarFiltros();
 
 
     mostrarMensaje(
-        "♻️ Progreso reiniciado"
-    );
-}
-
-
-/* ==========================================
-   MENSAJES
-   ========================================== */
-
-let timeoutMensaje;
-
-
-function mostrarMensaje(texto) {
-
-    mensaje.innerText =
-        texto;
-
-
-    mensaje.classList.add(
-        "visible"
-    );
-
-
-    clearTimeout(
-        timeoutMensaje
-    );
-
-
-    timeoutMensaje =
-        setTimeout(() => {
-
-            mensaje.classList.remove(
-                "visible"
-            );
-
-        }, 2200);
-}
-
-
-/* ==========================================
-   ERROR DE CARGA
-   ========================================== */
-
-function mostrarErrorCarga(error) {
-
-    frances.innerText =
-        "⚠️ No se pudieron cargar las tarjetas.";
-
-    espanol.innerText = "";
-
-    info.innerText =
-        "Comprueba que el archivo JSON está en la misma carpeta.";
-
-    contador.innerText =
-        "Error al cargar";
-
-    barraProgreso.value = 0;
-
-
-    mensaje.innerText =
-        "Si abriste index.html directamente, usa un servidor local como Live Server.";
-
-    mensaje.classList.add(
-        "visible"
-    );
-
-
-    console.error(error);
-}
-
-
-/* ==========================================
-   SERVICE WORKER
-   ========================================== */
-
-if (
-    "serviceWorker" in navigator
-) {
-
-    window.addEventListener(
-        "load",
-        () => {
-
-            navigator.serviceWorker
-                .register(
-                    "service-worker.js"
-                )
-                .then(() => {
-
-                    console.log(
-                        "Service Worker registrado"
-                    );
-
-                })
-                .catch(error => {
-
-                    /*
-                        El Service Worker no es
-                        necesario para que funcionen
-                        las flashcards.
-                    */
-
-                    console.warn(
-                        "Service Worker no disponible:",
-                        error
-                    );
-                });
-        }
+        "Progreso reiniciado."
     );
 }
