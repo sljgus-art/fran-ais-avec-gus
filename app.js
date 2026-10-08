@@ -12,6 +12,9 @@ fetch("francais_flashcards_A1_B2_v1.json")
     actualizarEstadisticas();
     cargarTarjeta();
 
+})
+.catch(error => {
+    console.error("Error cargando JSON:", error);
 });
 
 const nivelFilter = document.getElementById("nivelFilter");
@@ -51,6 +54,10 @@ function cargarTarjeta(){
         document.getElementById("espanol").innerText = "";
 
         document.getElementById("info").innerText = "";
+
+        document.getElementById("contador").innerText = "0 de 0";
+
+        document.getElementById("barraProgreso").value = 0;
 
         return;
     }
@@ -96,6 +103,10 @@ document
 
 function siguiente(){
 
+    if(tarjetasFiltradas.length === 0){
+        return;
+    }
+
     indice++;
 
     if(indice >= tarjetasFiltradas.length){
@@ -107,6 +118,10 @@ function siguiente(){
 }
 
 function anterior(){
+
+    if(tarjetasFiltradas.length === 0){
+        return;
+    }
 
     indice--;
 
@@ -151,6 +166,10 @@ function marcarDificil(){
 }
 
 function guardarProgreso(acierto){
+
+    if(tarjetasFiltradas.length === 0){
+        return;
+    }
 
     let progreso =
         JSON.parse(
@@ -298,8 +317,18 @@ if("serviceWorker" in navigator){
         () => {
 
             navigator.serviceWorker
-            .register("service-worker.js");
+            .register("service-worker.js")
+            .then(() => {
+                console.log("Service Worker registrado");
+            })
+            .catch(error => {
+                console.error(
+                    "Error registrando Service Worker:",
+                    error
+                );
+            });
 
         }
     );
+
 }
