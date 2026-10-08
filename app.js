@@ -304,14 +304,7 @@ function configurarEventos() {
         "click",
         siguienteEjercicio
     );
-
-
-    $("exerciseAudioBtn").addEventListener(
-        "click",
-        escucharEjercicio
-    );
-
-
+   
     $("empezarEscrituraBtn").addEventListener(
         "click",
         iniciarEscritura
