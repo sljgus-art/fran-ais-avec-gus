@@ -510,9 +510,14 @@ function aplicarFiltros() {
 
     tarjetasFiltradas = lista;
 
-    if (indice >= tarjetasFiltradas.length) {
-        indice = 0;
-    }
+console.log("Tarjetas totales:", tarjetas.length);
+console.log("Tarjetas filtradas:", lista.length);
+console.log("Nivel seleccionado:", nivel);
+console.log("Modo seleccionado:", modo);
+
+if (indice >= tarjetasFiltradas.length) {
+    indice = 0;
+}
 
     cargarTarjeta();
 }
