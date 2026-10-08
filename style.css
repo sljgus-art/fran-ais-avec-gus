@@ -809,6 +809,34 @@ nav button{
         opacity:1;
         transform:translateY(0);
 
-    }
+#flashInfo{
+    text-align:center;
+    color:#9ca3af;
+    margin-bottom:15px;
+}
 
+#flashFrances{
+    font-size:2rem;
+    text-align:center;
+    font-weight:bold;
+    margin:20px 0;
+}
+
+#flashEspanol{
+    font-size:1.5rem;
+    text-align:center;
+    color:#22c55e;
+    margin-bottom:20px;
+}
+
+.actions,
+.learn{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.learn{
+    margin-top:15px;
 }
